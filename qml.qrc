@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
+        <file>qml/content/fonts/fonts.txt</file>
+        <file>qml/content/App.qml</file>
+        <file>qml/content/CMakeLists.txt</file>
+        <file>qml/content/Screen01.ui.qml</file>
+        <file>qml/imports/Messanger/designer/plugin.metainfo</file>
+        <file>qml/imports/Messanger/CMakeLists.txt</file>
+        <file>qml/imports/Messanger/Constants.qml</file>
+        <file>qml/imports/Messanger/DirectoryFontLoader.qml</file>
+        <file>qml/imports/Messanger/EventListModel.qml</file>
+        <file>qml/imports/Messanger/EventListSimulator.qml</file>
+        <file>qml/imports/Messanger/qmldir</file>
+        <file>qml/imports/CMakeLists.txt</file>
+        <file>qml/src/app_environment.h</file>
+        <file>qml/src/import_qml_plugins.h</file>
+        <file>qml/src/main.cpp</file>
+        <file>qml/CMakeLists.txt</file>
+        <file>qml/main.qml</file>
+        <file>qml/Messanger.qmlproject</file>
+        <file>qml/Messanger.qmlproject.qtds</file>
+        <file>qml/qmlmodules</file>
+    </qresource>
+</RCC>
