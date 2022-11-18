@@ -3,7 +3,8 @@
 #include <QQuickView>
 #include <QQmlContext>
 #include <QQuickStyle>
-#include <signalsconnector.h>
+#include "signalsconnector.h"
+#include "socketclient.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +26,10 @@ int main(int argc, char *argv[])
     view.show();
     QObject *root = view.rootObject();
     tester.connectAuthenticationForm(root);
+
+    SocketClient client = SocketClient("127.0.0.1");
+    QString str = "Hey";
+    client.sendMessage(str.toStdWString());
 
     return app.exec();
 }

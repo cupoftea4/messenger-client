@@ -6,11 +6,15 @@ QT += quickcontrols2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        communication.cpp \
         main.cpp \
-        signalsconnector.cpp
+        signalsconnector.cpp \
+        socketclient.cpp
 
 RESOURCES += \
         $$files(qml/*)
+
+LIBS += -lws2_32
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = qml/imports
@@ -27,4 +31,6 @@ DISTFILES += \
     qtquickcontrols2.conf
 
 HEADERS += \
-    signalsconnector.h
+    communication.h \
+    signalsconnector.h \
+    socketclient.h
