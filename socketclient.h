@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include "communication.h"
+#include "jsonfactory.h"
 
 using namespace std::chrono_literals;
 
