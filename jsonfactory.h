@@ -7,7 +7,7 @@ using std::string;
 
 class JsonObjectWrapper: public QJsonObject {
 public:
-    char* c_str() {
+    char *c_str() {
         QJsonDocument document;
         document.setObject(*this);
         QByteArray bytes = document.toJson(QJsonDocument::Indented);
