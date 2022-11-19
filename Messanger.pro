@@ -12,7 +12,8 @@ SOURCES += \
         messageactionhandler.cpp \
         registeractionhandler.cpp \
         signalsconnector.cpp \
-        socketclient.cpp
+        socketclient.cpp \
+        uieventprocessor.cpp
 
 RESOURCES += \
         $$files(qml/*)
@@ -41,4 +42,5 @@ HEADERS += \
     messageactionhandler.h \
     registeractionhandler.h \
     signalsconnector.h \
-    socketclient.h
+    socketclient.h \
+    uieventprocessor.h

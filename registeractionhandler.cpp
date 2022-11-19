@@ -1,13 +1,6 @@
 #include "registeractionhandler.h"
 #include "jsonconstants.h"
 
-RegisterActionHandler::RegisterActionHandler(QObject *parent)
-    : QObject{parent}
-{
-
-}
-
-
 //RegisterActionHandler::RegisterActionHandler(QObject *obj)
 //{
 
@@ -19,7 +12,6 @@ RegisterActionHandler::RegisterActionHandler(QObject *parent)
 
 bool RegisterActionHandler::handler(QJsonObject json)
 {
-    qDebug() << "emit";
     emit failedRegistration();
 //    auto status = json.take(FIELD_STATUS);
 
@@ -31,10 +23,4 @@ bool RegisterActionHandler::handler(QJsonObject json)
 
 //    emit failedRegistration();
     return false;
-}
-
-void RegisterActionHandler::connectBtn(QObject *obj)
-{
-    QObject::connect(this, SIGNAL(failedRegistration()),
-                        obj, SLOT(onServerResponse("sffdsf")), Qt::QueuedConnection);
 }

@@ -43,4 +43,5 @@ private:
     std::map<std::string, ActionHandler*> actionHandles;
 };
 
+
 #endif // SOCKETCLIENT_H

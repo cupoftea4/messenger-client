@@ -37,6 +37,7 @@ Rectangle {
 
         Button {
             id: sockets_btn
+            objectName: "sockets_btn"
             height: 48
             text: qsTr("SOCKETS")
             anchors.left: parent.left
@@ -45,6 +46,13 @@ Rectangle {
             anchors.rightMargin: 0
             highlighted: true
             flat: false
+
+            Connections {
+                target: RegisterHandler
+                function onFailedRegistration() {
+                    console.log("AYYY THIS WORKS");
+                }
+            }
 
             Connections {
                 target: sockets_btn
@@ -78,17 +86,7 @@ Rectangle {
             flat: true
             highlighted: true
             Connections {
-                target: RegisterHandler
-                function onRegisterSuccess(username) {
-                    console.log("SUCCESSFUL REGISTRATION")
-                    name.text = username
-                    rectangle.state = "chat"
-                }
-                function onRegisterFail() {
-                    console.log("FAILED TO REGISTER")
-                    register_error.visible = true
-                    register_error.text = "This username is probably already used"
-                }
+
             }
         }
 
@@ -168,7 +166,7 @@ Rectangle {
             signal qmlSignal(string username, string password)
 
             Connections {
-                target: RegisterHandler
+                target: Tester
                 function onServerResponse(msg: string) {
                     console.log(msg);
 

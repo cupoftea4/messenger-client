@@ -1,4 +1,5 @@
 #include "signalsconnector.h"
+#include "qqmlengine.h"
 
 SignalsConnector::SignalsConnector(QObject *parent)
     : QObject{parent}
@@ -6,17 +7,30 @@ SignalsConnector::SignalsConnector(QObject *parent)
 
 }
 
-bool SignalsConnector::connectAuthenticationForm(QObject *rootElement)
+bool SignalsConnector::connectAuthentication(QQuickView& view, std::map<std::string, ActionHandler*> handlers, UiEventProcessor *uiProcessor)
 {
-    QObject *button = rootElement->findChild<QObject*>("login_btn");
+    // get root & ui elements to connect to
+    QObject *root = view.rootObject();
+    QObject *button = root->findChild<QObject*>("login_btn");
+
     if (button == nullptr)
         return false;
 
-    QObject::connect(button, SIGNAL(qmlSignal(QString,QString)),
-                        this, SLOT(cppSlot(QString,QString)));
+    // get action handlers
+    ActionHandler *registerHandler = handlers[ACTION_REGISTER];
 
-    QObject::connect(this, SIGNAL(serverResponse(QString)),
-                        button, SLOT(onServerResponse(QString)), Qt::QueuedConnection);
-    emit serverResponse("I'm client1");
+    // register action handlers
+    view.engine()->rootContext()->setContextProperty("RegisterHandler", registerHandler);
+
+    // connects
+    QObject::connect(button, SIGNAL(qmlSignal(QString,QString)),
+                        uiProcessor, SLOT(cppSlot(QString,QString)));
+    QObject::connect(registerHandler, SIGNAL(failedRegistration()),
+                        root, SLOT(onFailedRegistration()), Qt::QueuedConnection);
     return true;
+}
+
+bool SignalsConnector::connectSignals(QQuickView& view, std::map<std::string, ActionHandler*> handlers, UiEventProcessor *uiProcessor)
+{
+    return connectAuthentication(view, handlers, uiProcessor);
 }
