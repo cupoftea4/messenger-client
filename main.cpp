@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
     view.show();
     QObject *root = view.rootObject();
     tester.connectAuthenticationForm(root);
-
     SocketClient client = SocketClient("127.0.0.1");
     client.init();
+    std::this_thread::sleep_for(50ms);
     QString str = "Hey111111111";
     client.sendMessage(str.toStdWString());
 

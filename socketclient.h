@@ -33,7 +33,6 @@ private:
     void startCheckingMessages();
     void notifyServerJoin();
     void sendRawMessage(char*);
-
     SOCKET sock;
     std::function<void(std::wstring)> messageHandler;
     std::string ip = "localhost";

@@ -150,7 +150,7 @@ void SocketClient::sendRawMessage(char* chBuf) {
 }
 
 void SocketClient::sendMessage(std::wstring str) {
-   sendRawMessage(messageToJSON("SEND",str));
+   sendRawMessage(messageToJSON("MESSAGE",str));
 }
 
 char* SocketClient::messageToJSON(std::string type, std::wstring str){
@@ -159,7 +159,7 @@ char* SocketClient::messageToJSON(std::string type, std::wstring str){
 
     QJsonObject content;
     content.insert( "action", type.c_str() );
-    content.insert( "message", QString::fromStdWString(str));
+    content.insert( "payload", QString::fromStdWString(str));
     QJsonDocument document;
     document.setObject(content);
     QByteArray bytes = document.toJson( QJsonDocument::Indented );
@@ -169,7 +169,7 @@ char* SocketClient::messageToJSON(std::string type, std::wstring str){
 void SocketClient::notifyServerJoin() {
     int pid = GetCurrentProcessId();
     std::wstring s = std::to_wstring(pid);
-    sendRawMessage(messageToJSON("JOIN",s));
+    sendRawMessage(messageToJSON("MESSAGE",s));
 }
 
 void SocketClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
