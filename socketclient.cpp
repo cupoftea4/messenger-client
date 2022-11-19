@@ -154,7 +154,9 @@ void SocketClient::sendMessage(std::wstring str) {
    sendRawMessage(messageToJSON("SEND",str));
 }
 
-char* SocketClient::messageToJSON(std::string type,std::wstring str){
+char* SocketClient::messageToJSON(std::string type, std::wstring str){
+
+    char *res;
     QJsonObject content;
     content.insert( "action", type.c_str() );
     content.insert( "message", QString::fromStdWString(str));
@@ -162,7 +164,9 @@ char* SocketClient::messageToJSON(std::string type,std::wstring str){
     QJsonDocument document;
     document.setObject(content);
     QByteArray bytes = document.toJson( QJsonDocument::Indented );
-    return bytes.data();
+//    qDebug() << (res = JsonFactory::sendMsgJson("This message is sent using brand new Json Factory").c_str());
+    qDebug() << (res = bytes.data());
+    return res;
 }
 
 void SocketClient::notifyServerJoin() {
