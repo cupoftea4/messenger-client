@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     tester.connectAuthenticationForm(root);
 
     SocketClient client = SocketClient("127.0.0.1");
+    client.init();
     QString str = "Hey111111111";
     client.sendMessage(str.toStdWString());
 

@@ -127,7 +127,6 @@ void SocketClient::startCheckingMessages() {
 
                 /*switch(str[0]) {
                     case L'M': //join*/
-                        str.erase(0, 2);
                         if(messageHandler) messageHandler(str);
                     /*    break;
                     case L'D': //disconnect (Server)
