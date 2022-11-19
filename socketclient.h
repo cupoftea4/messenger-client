@@ -12,13 +12,15 @@
 #include <iostream>
 #include "communication.h"
 #include "jsonfactory.h"
+#include "registeractionhandler.h"
 
 using namespace std::chrono_literals;
 
 class SocketClient : public Communication
 {
 public:
-    SocketClient(std::string ip);
+    SocketClient(std::string ip, std::map<std::string, ActionHandler*> &handles);
+    ~SocketClient();
     bool init() override;
     bool isInited() override;
     bool isServer() override;
@@ -38,6 +40,7 @@ private:
     std::function<void(std::wstring)> messageHandler;
     std::string ip = "localhost";
     std::string port = DEFAULT_PORT;
+    std::map<std::string, ActionHandler*> actionHandles;
 };
 
 #endif // SOCKETCLIENT_H

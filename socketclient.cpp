@@ -28,10 +28,18 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     return tokens;
 }
 
-SocketClient::SocketClient(std::string ip) {
+SocketClient::SocketClient(std::string ip, std::map<std::string, ActionHandler*> &handles) {
     std::vector<std::string> splitted = split(ip, ":");
     this->ip = splitted[0];
     this->port = splitted.size() > 1 ? splitted[1] : DEFAULT_PORT;
+    this->actionHandles = handles;
+}
+
+SocketClient::~SocketClient()
+{
+    for (auto &pair : actionHandles) {
+        delete pair.second;
+    }
 }
 
 bool SocketClient::init() {
@@ -124,6 +132,22 @@ void SocketClient::startCheckingMessages() {
             iResult = recv(sock, chBuf, bufSize, 0);
             if(iResult > 0) {
                 std::wstring str(reinterpret_cast<wchar_t*>(chBuf), iResult/sizeof(wchar_t));
+                QJsonParseError jsonError;
+                QJsonDocument document = QJsonDocument::fromJson(chBuf, &jsonError );
+                if( jsonError.error != QJsonParseError::NoError){
+                    qDebug() << chBuf;
+                    qDebug() << "Error json upload";
+                    continue;
+                }
+                std::string type;
+                if( !document.isObject() )
+                {
+                    continue;
+                }
+                QJsonObject obj(document.object());
+                auto tempType = obj.take(FIELD_ACTION);
+                type = tempType.toString().toStdString();
+                actionHandles.at(type)->handler(obj);
 
                 /*switch(str[0]) {
                     case L'M': //join*/

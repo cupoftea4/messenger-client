@@ -9,8 +9,6 @@ Rectangle {
     height: Constants.height
     color: "#1b1b1b"
 
-
-
     Timeline {
         id: timeline
         animations: [
@@ -68,7 +66,6 @@ Rectangle {
 
         Button {
             id: mailslots_btn
-            objectName: "mailslots_btn"
             height: 48
             text: qsTr("MAILSLOTS")
             anchors.left: parent.left
@@ -77,23 +74,10 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-            Connections {
-                target: RegisterHandler
-                function onRegisterSuccess(username) {
-                    console.log("SUCCESSFUL REGISTRATION")
-                    name.text = username
-                    rectangle.state = "chat"
-                }
-                function onRegisterFail() {
-                    console.log("FAILED TO REGISTER")
-                    register_error.visible = true
-                    register_error.text = "This username is probably already used"
-                }
-            }
         }
 
         TextField {
-            id: username
+            id: name
             visible: false
             anchors.left: parent.left
             anchors.right: parent.right
@@ -104,7 +88,7 @@ Rectangle {
         }
 
         Text {
-            id: username_error
+            id: name_error
             height: 20
             visible: false
             color: "#ff3a3a"
@@ -165,24 +149,22 @@ Rectangle {
             anchors.rightMargin: 0
             anchors.leftMargin: 0
 
-            signal qmlSignal(string username, string password)
-
             Connections {
-                target: RegisterHandler
-                function onServerResponse(msg: string) {
-                    console.log(msg);
-
+                target: SignalsConnector
+                function onServerResponse(res) {
+                    console.log(res)
                 }
             }
+
+            signal qmlSignal(string name, string password)
 
             Connections {
                 target: login_btn
 
                 function onClicked() {
-                    if (username.length < 3 || !username.text.match(
-                                /^[0-9a-z_]+$/)) {
-                        username_error.visible = true
-                        username_error.text = "Name should be at least 3 character long \
+                    if (name.length < 3 || !name.text.match(/^[0-9a-z_]+$/)) {
+                        name_error.visible = true
+                        name_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                         password_error.visible = false
                     } else if (password.length < 6 || !password.text.match(
@@ -190,12 +172,10 @@ and contain only latin letters or digits"
                         password_error.visible = true
                         password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"
-                        username_error.visible = false
+                        name_error.visible = false
                     } else {
                         // TODO: replace with the right signal
-                        login_btn.qmlSignal(username.text, password.text);
-                        username_error.visible = false;
-                        password_error.visible = false;
+                        login_btn.qmlSignal(name.text, password.text)
                     }
                 }
             }
@@ -215,10 +195,10 @@ and contain only latin letters or digits"
                 target: signin_btn
                 function onClicked() {
                     if (rectangle.state === "register") {
-                        if (username.length < 3 || !username.text.match(
+                        if (name.length < 3 || !name.text.match(
                                     /^[0-9a-z_]+$/)) {
-                            username_error.visible = true
-                            username_error.text = "Name should be at least 3 character long \
+                            name_error.visible = true
+                            name_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                             password_error.visible = false
                         } else if (password.length < 6 || !password.text.match(
@@ -226,32 +206,20 @@ and contain only latin letters or digits"
                             password_error.visible = true
                             password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"
-                            username_error.visible = false
+                            name_error.visible = false
                         } else if (password_rep.text !== password.text) {
                             password_error.visible = true
                             password_error.text = "Passwords do no match."
-                            username_error.visible = false
+                            name_error.visible = false
                         } else {
                             // TODO: replace with the right signal
-                            login_btn.qmlSignal(username.text, password.text)
+                            login_btn.qmlSignal(name.text, password.text)
                         }
                     } else {
                         rectangle.state = "register"
                     }
                 }
             }
-        }
-
-        Text {
-            id: register_error
-            visible: false
-            color: "#ff3a3a"
-            text: qsTr("Error")
-            anchors.left: parent.left
-            anchors.right: parent.right
-            font.pixelSize: 12
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
         }
     }
 
@@ -271,10 +239,36 @@ and contain only latin letters or digits"
         }
     }
 
-    Text {
-        id: name
-        text: qsTr("Text")
-        font.pixelSize: 12
+    Row {
+        id: message_row
+        y: 572
+        height: 42
+        visible: false
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 25
+        anchors.leftMargin: 25
+        anchors.bottomMargin: 25
+
+        TextField {
+            id: textField
+            anchors.left: parent.left
+            anchors.right: send_btn.left
+            anchors.rightMargin: 15
+            anchors.leftMargin: 0
+            placeholderText: qsTr("Text Field")
+            color: "white"
+        }
+
+        Button {
+            id: send_btn
+            text: qsTr("Send")
+            anchors.right: parent.right
+            font.capitalization: Font.Capitalize
+            highlighted: true
+            anchors.rightMargin: 0
+        }
     }
 
     Flow {
@@ -320,10 +314,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -355,7 +349,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username_error
+                target: name_error
                 x: 130
                 y: 274
                 width: 219
@@ -414,10 +408,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -471,7 +465,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username_error
+                target: name_error
                 wrapMode: Text.WordWrap
             }
         },
@@ -506,10 +500,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -559,59 +553,15 @@ and contain only latin letters or digits"
                 target: message_row
                 visible: true
             }
-
-            PropertyChanges {
-                target: name
-                x: 151
-                y: 24
-                width: 297
-                height: 36
-                color: "#ffffff"
-                text: qsTr("Username")
-                font.pixelSize: 24
-                horizontalAlignment: Text.AlignRight
-                font.bold: true
-            }
         }
     ]
-    Row {
-        id: message_row
-        y: 572
-        height: 42
-        visible: false
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.rightMargin: 25
-        anchors.leftMargin: 25
-        anchors.bottomMargin: 25
-
-        TextField {
-            id: textField
-            anchors.left: parent.left
-            anchors.right: send_btn.left
-            anchors.rightMargin: 15
-            anchors.leftMargin: 0
-            placeholderText: qsTr("Text Field")
-            color: "white"
-        }
-
-        Button {
-            id: send_btn
-            text: qsTr("Send")
-            anchors.right: parent.right
-            font.capitalization: Font.Capitalize
-            highlighted: true
-            anchors.rightMargin: 0
-        }
-    }
 }
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:1.25}D{i:1}D{i:2}D{i:6}D{i:5}D{i:7}D{i:8}D{i:9}D{i:10}D{i:11}
-D{i:12}D{i:13}D{i:15}D{i:14}D{i:17}D{i:16}D{i:18}D{i:4}D{i:20}D{i:19}D{i:21}D{i:22}
-D{i:71}D{i:72}D{i:70}
+    D{i:0;formeditorZoom:1.25}D{i:1}D{i:5}D{i:4}D{i:6}D{i:7}D{i:8}D{i:9}D{i:10}D{i:11}
+D{i:12}D{i:14}D{i:15}D{i:13}D{i:17}D{i:16}D{i:3}D{i:19}D{i:18}D{i:21}D{i:22}D{i:20}
+D{i:23}
 }
 ##^##*/
 

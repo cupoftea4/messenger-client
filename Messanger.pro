@@ -6,8 +6,11 @@ QT += quickcontrols2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        actionhandler.cpp \
         jsonfactory.cpp \
         main.cpp \
+        messageactionhandler.cpp \
+        registeractionhandler.cpp \
         signalsconnector.cpp \
         socketclient.cpp
 
@@ -31,8 +34,11 @@ DISTFILES += \
     qtquickcontrols2.conf
 
 HEADERS += \
+    actionhandler.h \
     communication.h \
     jsonconstants.h \
     jsonfactory.h \
+    messageactionhandler.h \
+    registeractionhandler.h \
     signalsconnector.h \
     socketclient.h

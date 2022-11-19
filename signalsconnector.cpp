@@ -14,7 +14,9 @@ bool SignalsConnector::connectAuthenticationForm(QObject *rootElement)
 
     QObject::connect(button, SIGNAL(qmlSignal(QString,QString)),
                         this, SLOT(cppSlot(QString,QString)));
+
     QObject::connect(this, SIGNAL(serverResponse(QString)),
                         button, SLOT(onServerResponse(QString)), Qt::QueuedConnection);
+    emit serverResponse("I'm client1");
     return true;
 }
