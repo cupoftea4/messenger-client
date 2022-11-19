@@ -2,6 +2,7 @@
 #define JSONFACTORY_H
 #include <QJsonObject>
 #include <QJsonDocument>
+#include "jsonconstants.h"
 
 using std::string;
 
@@ -18,7 +19,6 @@ public:
 class JsonFactory
 {
 public:
-    JsonFactory();
     static JsonObjectWrapper pingJson();
     static JsonObjectWrapper loginJson(QString username, QString password);
     static JsonObjectWrapper registerJson(QString username, QString password);

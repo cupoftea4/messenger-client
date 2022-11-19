@@ -32,6 +32,7 @@ DISTFILES += \
 
 HEADERS += \
     communication.h \
+    jsonconstants.h \
     jsonfactory.h \
     signalsconnector.h \
     socketclient.h
