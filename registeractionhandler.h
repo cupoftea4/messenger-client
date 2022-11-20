@@ -13,6 +13,7 @@ public:
     bool handler(QJsonObject json) ;
 signals:
     void failedRegistration();
+    void successfulRegistration(QString username);
 
 };
 

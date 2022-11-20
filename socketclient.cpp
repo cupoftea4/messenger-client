@@ -28,7 +28,7 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     return tokens;
 }
 
-SocketClient::SocketClient(std::string ip, std::map<std::string, ActionHandler*> &handles) {
+SocketClient::SocketClient(std::string ip, std::map<QString, ActionHandler*> &handles) {
     std::vector<std::string> splitted = split(ip, ":");
     this->ip = splitted[0];
     this->port = splitted.size() > 1 ? splitted[1] : DEFAULT_PORT;
@@ -124,12 +124,10 @@ void SocketClient::startCheckingMessages() {
             std::fill(chBuf, chBuf+bufSize, L'\0');
             iResult = recv(sock, chBuf, bufSize, 0);
             if(iResult > 0) {
-//                std::wstring str(reinterpret_cast<wchar_t*>(chBuf), iResult/sizeof(wchar_t));
                 QJsonParseError jsonError;
                 QJsonDocument document = QJsonDocument::fromJson(chBuf, &jsonError);
                 qDebug() << chBuf;
                 if(jsonError.error != QJsonParseError::NoError){
-                    qDebug() << chBuf;
                     qDebug() << "Error json upload";
                     continue;
                 }
@@ -139,18 +137,11 @@ void SocketClient::startCheckingMessages() {
                     continue;
                 }
                 QJsonObject obj(document.object());
-                auto tempType = obj.take("payload");
-                std::wstring msg = tempType.toString().toStdWString();
-                /*switch(str[0]) {
-                    case L'M': //join*/
-                if(messageHandler) messageHandler(msg);
-                    /*    break;
-                    case L'D': //disconnect (Server)
-                        if(messageHandler) messageHandler(L"<i>Сервер закрив з'єднання!</i>");
-                        break;
-                    default: //ignore
-                        break;
-                }*/
+                QString action = obj.take(FIELD_ACTION).toString();
+                if (actionHandles.find(action) != actionHandles.end()) {
+                    actionHandles[action]->handler(obj);
+                }
+
             }
             //qDebug() << "Going to sleep...\n";
             std::this_thread::sleep_for(50ms);
@@ -161,33 +152,16 @@ void SocketClient::startCheckingMessages() {
     thread.detach();
 }
 
-void SocketClient::sendRawMessage(char* chBuf) {
+void SocketClient::sendRawMessage(const char* chBuf) {
     send(sock, chBuf, strlen(chBuf), 0 );
 }
 
-void SocketClient::sendMessage(std::wstring str) {
-   sendRawMessage(messageToJSON("MESSAGE",str));
-}
-
-char* SocketClient::messageToJSON(std::string type, std::wstring str){
-
-    qDebug() << JsonFactory::sendMsgJson("This message is created using brand new Json Factory").c_str();
-
-    QJsonObject content;
-    content.insert( "action", type.c_str() );
-    content.insert( "payload", QString::fromStdWString(str));
-    QJsonDocument document;
-    document.setObject(content);
-    QByteArray bytes = document.toJson( QJsonDocument::Indented );
-    return bytes.data();
-}
 
 void SocketClient::notifyServerJoin() {
     int pid = GetCurrentProcessId();
-    std::wstring s = std::to_wstring(pid);
-    sendRawMessage(messageToJSON("MESSAGE",s));
+    sendRawMessage(JsonFactory::sendMsgJson(QString::number(pid)).c_str());
 }
 
 void SocketClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
-    messageHandler = lambda;
+    renderMessage = lambda;
 }

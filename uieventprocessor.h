@@ -9,7 +9,6 @@ class UiEventProcessor : public QObject
     Q_OBJECT
 public:
     explicit UiEventProcessor(SocketClient *client, QObject *parent = nullptr);
-    void sendSignalToAppendMessage(QString message);
 
 private:
     SocketClient *client = nullptr;
@@ -18,10 +17,13 @@ signals:
     void appendMessage(QString message);
 
 public slots:
-    void cppSlot(const QString &name, const QString &password) {
-        qDebug() << "Trying to log in with name:" << name << "and pwd: " << password;
-//        emit serverResponse("You can login now");
+    void onRegisterClicked(const QString &name, const QString &password) {
+        qDebug() << "Trying to register in with name:" << name << "and pwd: " << password;
     }
+    void onLoginClicked(const QString &name, const QString &password) {
+        qDebug() << "Trying to login in with name:" << name << "and pwd: " << password;
+    }
+    void onMessageSend(QString message);
 
 
 

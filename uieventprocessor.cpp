@@ -3,11 +3,24 @@
 UiEventProcessor::UiEventProcessor(SocketClient *client, QObject *parent)
     : QObject{parent}
 {
-    this->client = client;
+    this->connection = client;
 }
 
-void UiEventProcessor::sendSignalToAppendMessage(QString message)
+
+void UiEventProcessor::onMessageSend(QString message)
 {
-    emit appendMessage(message);
-    qDebug() << "in send signal: " << message;
+    qDebug() << "Trying to send message:" << message;
+    connection->sendRawMessage(JsonFactory::sendMsgJson(message).c_str());
+}
+
+void UiEventProcessor::onLoginClicked(const QString &name, const QString &password)
+{
+    qDebug() << "Trying to login in with name:" << name << "and pwd: " << password;
+    connection->sendRawMessage(JsonFactory::loginJson(name, password).c_str());
+}
+
+void UiEventProcessor::onRegisterClicked(const QString &name, const QString &password)
+{
+    qDebug() << "Trying to register in with name:" << name << "and pwd: " << password;
+    connection->sendRawMessage(JsonFactory::registerJson(name, password).c_str());
 }

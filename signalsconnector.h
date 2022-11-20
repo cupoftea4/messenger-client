@@ -13,9 +13,11 @@ class SignalsConnector : public QObject
     Q_OBJECT
 public:
     explicit SignalsConnector(QObject *parent = nullptr);
-    bool connectSignals(QQuickView& view, std::map<std::string, ActionHandler*> handlers, UiEventProcessor *uiProcessor);
+    bool connectSignals(QQuickView& view, std::map<QString, ActionHandler*> handlers, UiEventProcessor *uiProcessor);
 private:
-    bool connectAuthentication(QQuickView& view, std::map<std::string, ActionHandler*> handlers, UiEventProcessor *uiProcessor);
+    bool connectRegisterHandler(QQuickView& view, ActionHandler* handler, UiEventProcessor *uiProcessor);
+    bool connectMessageHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
+    bool connectLoginHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
 
 signals:
     void serverResponse(QString res);

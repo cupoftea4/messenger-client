@@ -7,9 +7,9 @@ MessageActionHandler::MessageActionHandler()
 
 bool MessageActionHandler::handler(QJsonObject json)
 {
-    auto sender = json.take(FIELD_USERNAME);
-    auto message = json.take(FIELD_PAYLOAD);
+    auto sender = json.take(FIELD_USERNAME).toString();
+    auto message = json.take(FIELD_PAYLOAD).toString();
     qDebug() << sender << ": " << message;
-    emit showMessage(message.toString(), sender.toString());
+    emit messageReceived(message, sender);
     return false;
 }

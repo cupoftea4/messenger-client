@@ -10,6 +10,7 @@
 #include "messageactionhandler.h"
 #include "jsonfactory.h"
 #include "uieventprocessor.h"
+#include "loginactionhandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,15 +19,16 @@ int main(int argc, char *argv[])
 #endif
 
     QGuiApplication app(argc, argv);
-    SignalsConnector tester;
+    SignalsConnector uiConnector;
 
     // create handlers
-    ActionHandler *handler = new RegisterActionHandler;
-    std::map<std::string, ActionHandler*> jsonHandlers;
-    jsonHandlers[ACTION_REGISTER] = handler;
-
-
-//    UiEventProcessor *uiProcessor = new UiEventProcessor(client);
+    ActionHandler *registerHandler = new RegisterActionHandler;
+    ActionHandler *messageHendler = new MessageActionHandler;
+    ActionHandler *loginHandler = new LoginActionHandler;
+    std::map<QString, ActionHandler*> jsonHandlers;
+    jsonHandlers[ACTION_REGISTER] = registerHandler;
+    jsonHandlers[ACTION_MESSAGE] = messageHendler;
+    jsonHandlers[ACTION_LOGIN] = loginHandler;
 
 
     QQuickView view;
@@ -38,19 +40,16 @@ int main(int argc, char *argv[])
     }
     view.show();
 
-    SocketClient *client = new SocketClient("localhost", jsonHandlers);
-    UiEventProcessor *uiProcessor = new UiEventProcessor(client);
-    client->setMessageReceiver([uiProcessor](std::wstring msg) {
-        qDebug() << "In lambda: " << QString::fromStdWString(msg);
-        uiProcessor->sendSignalToAppendMessage(QString::fromStdWString(msg));
-    });
-    client->init();
+    SocketClient *connection = new SocketClient("localhost", jsonHandlers);
+    UiEventProcessor *uiProcessor = new UiEventProcessor(connection);
+    connection->init();
 
-    tester.connectSignals(view, jsonHandlers, uiProcessor);
-    handler->handler(JsonFactory::pingJson());
+    uiConnector.connectSignals(view, jsonHandlers, uiProcessor);
+    registerHandler->handler(JsonFactory::pingJson());
+    messageHendler->handler(JsonFactory::sendMsgJson("I'm message from server"));
 
     std::this_thread::sleep_for(50ms);
     QString str = "Hey111111111";
-    client->sendMessage(str.toStdWString());
+    uiProcessor->onMessageSend(str);
     return app.exec();
 }

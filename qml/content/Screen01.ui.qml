@@ -10,14 +10,31 @@ Rectangle {
     color: "#1b1b1b"
 
     Connections {
-        target: UiProcessor
-        function onAppendMessage(msg: string) {
-            console.log("Appending message from client: ", msg);
+        target: MessageHandler
+        function onMessageReceived(sender: string, msg: string) {
+            console.log("Appending message from client: ", sender, ": ", msg);
         }
     }
 
+    Connections {
+        target: RegisterHandler
+        function onFailedRegistration() {
+            console.log("FAILED REGISTRATION");
+        }
+        function onSuccessfulRegistration() {
+            console.log("SUCCESSFUL REGISTRATION");
+        }
+    }
 
-
+    Connections {
+        target: LoginHandler
+        function onFailedLogin() {
+            console.log("FAILED LOGIN");
+        }
+        function onSuccessfulLogin() {
+            console.log("SUCCESSFUL LOGIN");
+        }
+    }
     Timeline {
         id: timeline
         animations: [
@@ -53,13 +70,6 @@ Rectangle {
             anchors.rightMargin: 0
             highlighted: true
             flat: false
-
-            Connections {
-                target: RegisterHandler
-                function onFailedRegistration() {
-                    console.log("AYYY THIS WORKS");
-                }
-            }
 
 
             Connections {
@@ -171,15 +181,8 @@ Rectangle {
             anchors.rightMargin: 0
             anchors.leftMargin: 0
 
-            signal qmlSignal(string username, string password)
+            signal loginClicked(string username, string password)
 
-            Connections {
-                target: Tester
-                function onServerResponse(msg: string) {
-                    console.log(msg);
-
-                }
-            }
 
             Connections {
                 target: login_btn
@@ -199,7 +202,7 @@ and contain only latin letters or digits"
                         username_error.visible = false
                     } else {
                         // TODO: replace with the right signal
-                        login_btn.qmlSignal(username.text, password.text);
+                        login_btn.loginClicked(username.text, password.text);
                         username_error.visible = false;
                         password_error.visible = false;
                     }
@@ -207,7 +210,8 @@ and contain only latin letters or digits"
             }
         }
         Button {
-            id: signin_btn
+            id: register_btn
+            objectName: "register_btn"
             visible: false
             text: qsTr("Register")
             anchors.left: parent.left
@@ -216,9 +220,10 @@ and contain only latin letters or digits"
             highlighted: true
             anchors.rightMargin: 0
             anchors.leftMargin: 0
+            signal registerClicked(string username, string password)
 
             Connections {
-                target: signin_btn
+                target: register_btn
                 function onClicked() {
                     if (rectangle.state === "register") {
                         if (username.length < 3 || !username.text.match(
@@ -239,7 +244,7 @@ and contain only latin letters or digits"
                             username_error.visible = false
                         } else {
                             // TODO: replace with the right signal
-                            login_btn.qmlSignal(username.text, password.text)
+                            register_btn.registerClicked(username.text, password.text)
                         }
                     } else {
                         rectangle.state = "register"
@@ -348,7 +353,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: signin_btn
+                target: register_btn
                 visible: true
                 highlighted: true
                 flat: true
@@ -442,7 +447,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: signin_btn
+                target: register_btn
                 visible: true
                 flat: false
                 highlighted: true
@@ -534,7 +539,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: signin_btn
+                target: register_btn
                 visible: true
                 flat: false
                 highlighted: true
@@ -593,7 +598,7 @@ and contain only latin letters or digits"
         anchors.bottomMargin: 25
 
         TextField {
-            id: textField
+            id: message
             anchors.left: parent.left
             anchors.right: send_btn.left
             anchors.rightMargin: 15
@@ -604,11 +609,19 @@ and contain only latin letters or digits"
 
         Button {
             id: send_btn
+            objectName: "send_btn"
             text: qsTr("Send")
             anchors.right: parent.right
             font.capitalization: Font.Capitalize
             highlighted: true
             anchors.rightMargin: 0
+            signal sendMessage(string message)
+            Connections {
+                function onClicked() {
+                    send_btn.sendMessage(message.text)
+                }
+            }
+
         }
     }
 }
