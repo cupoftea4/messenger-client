@@ -301,7 +301,6 @@ and contain only latin letters or digits"
                             password_error.text = "Passwords do no match."
                             username_error.visible = false
                         } else {
-                            // TODO: replace with the right signal
                             register_btn.registerClicked(username.text, password.text)
                         }
                     } else {
@@ -656,6 +655,7 @@ and contain only latin letters or digits"
 
             PropertyChanges {
                 target: message
+                placeholderText: "Type here..."
                 placeholderTextColor: "#b3ffffff"
             }
         }
@@ -716,5 +716,3 @@ and contain only latin letters or digits"
         }
     }
 }
-
-
