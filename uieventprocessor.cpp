@@ -5,3 +5,9 @@ UiEventProcessor::UiEventProcessor(SocketClient *client, QObject *parent)
 {
     this->client = client;
 }
+
+void UiEventProcessor::sendSignalToAppendMessage(QString message)
+{
+    emit appendMessage(message);
+    qDebug() << "in send signal: " << message;
+}

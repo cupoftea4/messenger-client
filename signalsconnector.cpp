@@ -32,5 +32,8 @@ bool SignalsConnector::connectAuthentication(QQuickView& view, std::map<std::str
 
 bool SignalsConnector::connectSignals(QQuickView& view, std::map<std::string, ActionHandler*> handlers, UiEventProcessor *uiProcessor)
 {
+    view.engine()->rootContext()->setContextProperty("UiProcessor", uiProcessor);
+    QObject::connect(uiProcessor, SIGNAL(appendMessage(QString)),
+                        view.rootObject(), SLOT(onAppendMessage(QString)), Qt::QueuedConnection);
     return connectAuthentication(view, handlers, uiProcessor);
 }

@@ -9,6 +9,13 @@ Rectangle {
     height: Constants.height
     color: "#1b1b1b"
 
+    Connections {
+        target: UiProcessor
+        function onAppendMessage(msg: string) {
+            console.log("Appending message from client: ", msg);
+        }
+    }
+
 
 
     Timeline {
@@ -53,6 +60,7 @@ Rectangle {
                     console.log("AYYY THIS WORKS");
                 }
             }
+
 
             Connections {
                 target: sockets_btn

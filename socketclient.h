@@ -20,7 +20,6 @@ class SocketClient : public Communication
 {
 public:
     SocketClient(std::string ip, std::map<std::string, ActionHandler*> &handles);
-    ~SocketClient();
     bool init() override;
     bool isInited() override;
     bool isServer() override;

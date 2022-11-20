@@ -9,11 +9,13 @@ class UiEventProcessor : public QObject
     Q_OBJECT
 public:
     explicit UiEventProcessor(SocketClient *client, QObject *parent = nullptr);
+    void sendSignalToAppendMessage(QString message);
 
 private:
     SocketClient *client = nullptr;
 
 signals:
+    void appendMessage(QString message);
 
 public slots:
     void cppSlot(const QString &name, const QString &password) {

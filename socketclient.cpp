@@ -35,13 +35,6 @@ SocketClient::SocketClient(std::string ip, std::map<std::string, ActionHandler*>
     this->actionHandles = handles;
 }
 
-SocketClient::~SocketClient()
-{
-    for (auto &pair : actionHandles) {
-        delete pair.second;
-    }
-}
-
 bool SocketClient::init() {
     WSADATA wsaData;
 
@@ -131,28 +124,26 @@ void SocketClient::startCheckingMessages() {
             std::fill(chBuf, chBuf+bufSize, L'\0');
             iResult = recv(sock, chBuf, bufSize, 0);
             if(iResult > 0) {
-                std::wstring str(reinterpret_cast<wchar_t*>(chBuf), iResult/sizeof(wchar_t));
+//                std::wstring str(reinterpret_cast<wchar_t*>(chBuf), iResult/sizeof(wchar_t));
                 QJsonParseError jsonError;
-                QJsonDocument document = QJsonDocument::fromJson(chBuf, &jsonError );
-                if( jsonError.error != QJsonParseError::NoError){
+                QJsonDocument document = QJsonDocument::fromJson(chBuf, &jsonError);
+                qDebug() << chBuf;
+                if(jsonError.error != QJsonParseError::NoError){
                     qDebug() << chBuf;
                     qDebug() << "Error json upload";
                     continue;
                 }
                 std::string type;
-                if( !document.isObject() )
+                if(!document.isObject())
                 {
                     continue;
                 }
                 QJsonObject obj(document.object());
-                auto tempType = obj.take(FIELD_ACTION);
-                type = tempType.toString().toStdString();
-                actionHandles.at(type)->handler(obj);
-
+                auto tempType = obj.take("payload");
+                std::wstring msg = tempType.toString().toStdWString();
                 /*switch(str[0]) {
                     case L'M': //join*/
-                        str.erase(0, 2);
-                        if(messageHandler) messageHandler(str);
+                if(messageHandler) messageHandler(msg);
                     /*    break;
                     case L'D': //disconnect (Server)
                         if(messageHandler) messageHandler(L"<i>Сервер закрив з'єднання!</i>");
@@ -175,7 +166,7 @@ void SocketClient::sendRawMessage(char* chBuf) {
 }
 
 void SocketClient::sendMessage(std::wstring str) {
-   sendRawMessage(messageToJSON("SEND",str));
+   sendRawMessage(messageToJSON("MESSAGE",str));
 }
 
 char* SocketClient::messageToJSON(std::string type, std::wstring str){
@@ -184,7 +175,7 @@ char* SocketClient::messageToJSON(std::string type, std::wstring str){
 
     QJsonObject content;
     content.insert( "action", type.c_str() );
-    content.insert( "message", QString::fromStdWString(str));
+    content.insert( "payload", QString::fromStdWString(str));
     QJsonDocument document;
     document.setObject(content);
     QByteArray bytes = document.toJson( QJsonDocument::Indented );
@@ -194,7 +185,7 @@ char* SocketClient::messageToJSON(std::string type, std::wstring str){
 void SocketClient::notifyServerJoin() {
     int pid = GetCurrentProcessId();
     std::wstring s = std::to_wstring(pid);
-    sendRawMessage(messageToJSON("JOIN",s));
+    sendRawMessage(messageToJSON("MESSAGE",s));
 }
 
 void SocketClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
