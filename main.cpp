@@ -45,11 +45,6 @@ int main(int argc, char *argv[])
     connection->init();
 
     uiConnector.connectSignals(view, jsonHandlers, uiProcessor);
-//    loginHandler->handler(JsonFactory::pingJson());
-//    messageHandler->handler(JsonFactory::sendMsgJson("I'm message from server"));
 
-    std::this_thread::sleep_for(50ms);
-    QString str = "Hey111111111";
-    uiProcessor->onMessageSend(str);
     return app.exec();
 }

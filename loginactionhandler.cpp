@@ -7,8 +7,6 @@ LoginActionHandler::LoginActionHandler()
 
 bool LoginActionHandler::handler(QJsonObject json)
 {
-//    emit successfulLogin("Amy");
-//    return true;
     auto status = json.take(FIELD_STATUS).toString();
 
     if (status == STATUS_SUCCESS) {

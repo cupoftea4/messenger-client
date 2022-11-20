@@ -143,9 +143,7 @@ void SocketClient::startCheckingMessages() {
                 }
 
             }
-            //qDebug() << "Going to sleep...\n";
             std::this_thread::sleep_for(50ms);
-            //qDebug() << "Slept well!\n";
             delete[] chBuf;
         }
     });

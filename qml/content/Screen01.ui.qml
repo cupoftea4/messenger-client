@@ -137,7 +137,6 @@ Rectangle {
             Connections {
                 target: sockets_btn
                 function onClicked() {
-                    console.log("sockets clicked????")
                     rectangle.state = "login"
                 }
             }
@@ -261,7 +260,6 @@ and contain only latin letters or digits"
 and contain only latin letters or digits"
                         username_error.visible = false
                     } else {
-                        // TODO: replace with the right signal
                         login_btn.loginClicked(username.text, password.text)
                         username_error.visible = false
                         password_error.visible = false
