@@ -23,11 +23,11 @@ int main(int argc, char *argv[])
 
     // create handlers
     ActionHandler *registerHandler = new RegisterActionHandler;
-    ActionHandler *messageHendler = new MessageActionHandler;
+    ActionHandler *messageHandler = new MessageActionHandler;
     ActionHandler *loginHandler = new LoginActionHandler;
     std::map<QString, ActionHandler*> jsonHandlers;
     jsonHandlers[ACTION_REGISTER] = registerHandler;
-    jsonHandlers[ACTION_MESSAGE] = messageHendler;
+    jsonHandlers[ACTION_MESSAGE] = messageHandler;
     jsonHandlers[ACTION_LOGIN] = loginHandler;
 
 
@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
     connection->init();
 
     uiConnector.connectSignals(view, jsonHandlers, uiProcessor);
-    registerHandler->handler(JsonFactory::pingJson());
-    messageHendler->handler(JsonFactory::sendMsgJson("I'm message from server"));
+//    loginHandler->handler(JsonFactory::pingJson());
+//    messageHandler->handler(JsonFactory::sendMsgJson("I'm message from server"));
 
     std::this_thread::sleep_for(50ms);
     QString str = "Hey111111111";

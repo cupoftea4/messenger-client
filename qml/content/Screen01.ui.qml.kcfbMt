@@ -4,7 +4,8 @@ import Messanger
 import QtQuick.Timeline 1.0
 
 Rectangle {
-    id: rectangle
+    id: root
+    property alias name: name
     width: Constants.width
     height: Constants.height
     color: "#1b1b1b"
@@ -17,35 +18,32 @@ Rectangle {
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
             const msgBackgroundColor = (isMy) ? "white" : "#a61547"
             const msgColor = (isMy) ? "black" : "white"
-            let msgWidth = msg.length * 8 + 20
-            const msgHeight = Math.ceil(msgWidth / 350) * 20 + (isMy ? 20 : 30)
+            let msgWidth = msg.length * 9 + 20
             msgWidth = Math.min(msgWidth, 350)
-            const msgSender = sender
 
             const newObj = Qt.createQmlObject(`
                                               import QtQuick 2.0
                                               Item {
                                               width: 400
-                                              height: ${msgHeight}
+                                              height: 70
 
                                               Rectangle {
                                               id: message_sample
                                               width: ${msgWidth}
-                                              height: ${msgHeight}
+                                              height: 60
                                               radius: 15
                                               color: "${msgBackgroundColor}"
                                               ${msgAnchors}
 
                                               Text {
                                               id: sender
-                                              visible: ${!isMy}
-                                              font.bold: true
                                               color: "${msgColor}"
-                                              text: "${msgSender}"
-                                              anchors.left: parent.left
-                                              anchors.top: parent.top
+                                              text: "${sender}"
+                                              ${msgAnchors}
+                                              anchors.rightMargin: 10
                                               anchors.leftMargin: 10
-                                              anchors.topMargin: 5
+                                              anchors.bottomMargin: 10
+                                              anchors.topMargin: 10
 
                                               }
 
@@ -54,14 +52,14 @@ Rectangle {
                                               color: "${msgColor}"
                                               text: "${msg}"
                                               anchors.fill: parent
-                                              font.pixelSize: 16
+                                              font.pixelSize: 18
                                               wrapMode: Text.WordWrap
-                                              horizontalAlignment: Text.AlignHLeft
+                                              horizontalAlignment: Text.AlignLeft
                                               verticalAlignment: Text.AlignVCenter
                                               anchors.rightMargin: 10
                                               anchors.leftMargin: 10
                                               anchors.bottomMargin: 10
-                                              anchors.topMargin: ${isMy ? 10 : 20}
+                                              anchors.topMargin: 10
                                               }
                                               }
                                               }
@@ -80,7 +78,7 @@ Rectangle {
         }
         function onSuccessfulRegistration(receivedName) {
             console.log("SUCCESSFUL REGISTRATION")
-            rectangle.state = "chat"
+            root.state = "chat"
             name.text = receivedName
         }
     }
@@ -94,7 +92,7 @@ Rectangle {
         }
         function onSuccessfulLogin(receivedName) {
             console.log("SUCCESSFUL LOGIN")
-            rectangle.state = "chat"
+            root.state = "chat"
             name.text = receivedName
         }
     }
@@ -137,8 +135,7 @@ Rectangle {
             Connections {
                 target: sockets_btn
                 function onClicked() {
-                    console.log("sockets clicked????")
-                    rectangle.state = "login"
+                    root.state = "login"
                 }
             }
         }
@@ -285,7 +282,7 @@ and contain only latin letters or digits"
             Connections {
                 target: register_btn
                 function onClicked() {
-                    if (rectangle.state === "register") {
+                    if (root.state === "register") {
                         if (username.length < 3 || !username.text.match(
                                     /^[0-9a-z_]+$/)) {
                             username_error.visible = true
@@ -304,10 +301,11 @@ and contain only latin letters or digits"
                             username_error.visible = false
                         } else {
                             // TODO: replace with the right signal
-                            register_btn.registerClicked(username.text, password.text)
+                            register_btn.registerClicked(username.text,
+                                                         password.text)
                         }
                     } else {
-                        rectangle.state = "register"
+                        root.state = "register"
                     }
                 }
             }
@@ -337,7 +335,7 @@ and contain only latin letters or digits"
         Connections {
             target: back_btn
             function onClicked() {
-                rectangle.state = "login"
+                root.state = "login"
             }
         }
     }
@@ -418,7 +416,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: rectangle
+                target: root
                 clip: false
                 antialiasing: false
             }
@@ -512,7 +510,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: rectangle
+                target: root
                 antialiasing: false
             }
 
@@ -604,7 +602,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: rectangle
+                target: root
                 antialiasing: false
             }
 
@@ -649,7 +647,6 @@ and contain only latin letters or digits"
                 target: messages_scroll
                 x: 39
                 y: 66
-                visible: true
                 anchors.topMargin: 56
                 anchors.bottomMargin: 73
                 anchors.rightMargin: 30
@@ -702,7 +699,6 @@ and contain only latin letters or digits"
 
     ScrollView {
         id: messages_scroll
-        visible: false
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: name.top
@@ -715,8 +711,42 @@ and contain only latin letters or digits"
             width: 400
             anchors.fill: parent
             spacing: 10
+            //            Item {
+            //            width: 400
+            //            height: 60
+            //            Text {
+            //              id: sender
+            //              color: "white"
+            //              text: "${sender}"
+            //              anchors.right: parent.right
+            //              anchors.rightMargin: 0
+
+            //            }
+            //            Rectangle {
+            //            id: message_sample
+            //            width: 200
+            //            height: 50
+            //            radius: 15
+            //            color: "red"
+            //            anchors.right: parent.right
+            //            anchors.rightMargin: 0
+
+            //            Text {
+            //            id: msg
+            //            color: "$white"
+            //            text: "${msg}"
+            //            anchors.fill: parent
+            //            font.pixelSize: 18
+            //            wrapMode: Text.WordWrap
+            //            horizontalAlignment: Text.AlignLeft
+            //            verticalAlignment: Text.AlignVCenter
+            //            anchors.rightMargin: 10
+            //            anchors.leftMargin: 10
+            //            anchors.bottomMargin: 10
+            //            anchors.topMargin: 10
+            //            }
+            //            }
+            //            }
         }
     }
 }
-
-

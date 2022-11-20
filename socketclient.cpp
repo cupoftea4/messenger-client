@@ -124,9 +124,9 @@ void SocketClient::startCheckingMessages() {
             std::fill(chBuf, chBuf+bufSize, L'\0');
             iResult = recv(sock, chBuf, bufSize, 0);
             if(iResult > 0) {
+                qDebug() << "Received information: " << chBuf;
                 QJsonParseError jsonError;
                 QJsonDocument document = QJsonDocument::fromJson(chBuf, &jsonError);
-                qDebug() << chBuf;
                 if(jsonError.error != QJsonParseError::NoError){
                     qDebug() << "Error json upload";
                     continue;

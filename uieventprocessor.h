@@ -11,18 +11,14 @@ public:
     explicit UiEventProcessor(SocketClient *client, QObject *parent = nullptr);
 
 private:
-    SocketClient *client = nullptr;
+    SocketClient *connection = nullptr;
 
 signals:
     void appendMessage(QString message);
 
 public slots:
-    void onRegisterClicked(const QString &name, const QString &password) {
-        qDebug() << "Trying to register in with name:" << name << "and pwd: " << password;
-    }
-    void onLoginClicked(const QString &name, const QString &password) {
-        qDebug() << "Trying to login in with name:" << name << "and pwd: " << password;
-    }
+    void onRegisterClicked(const QString &name, const QString &password);
+    void onLoginClicked(const QString &name, const QString &password);
     void onMessageSend(QString message);
 
 
