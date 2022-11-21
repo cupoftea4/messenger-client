@@ -153,6 +153,7 @@ void SocketConnection::startCheckingMessages() {
 }
 
 void SocketConnection::sendRawMessage(const char* chBuf) {
+    qDebug() << "Sending raw message: " << chBuf;
     send(sock, chBuf, strlen(chBuf), 0 );
 }
 

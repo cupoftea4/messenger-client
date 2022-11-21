@@ -15,17 +15,23 @@ void UiEventProcessor::connectionFailed()
 void UiEventProcessor::onMessageSend(QString message)
 {
     qDebug() << "Trying to send message:" << message;
-    connection->sendRawMessage(JsonFactory::sendMsgJson(message).c_str());
+    char * rawMsg = JsonFactory::sendMsgJson(message).c_str();
+    connection->sendRawMessage(rawMsg);
+    delete [] rawMsg;
 }
 
 void UiEventProcessor::onLoginClicked(const QString &name, const QString &password)
 {
     qDebug() << "Trying to login in with name:" << name << "and pwd: " << password;
-    connection->sendRawMessage(JsonFactory::loginJson(name, password).c_str());
+    char * rawMsg = JsonFactory::loginJson(name, password).c_str();
+    connection->sendRawMessage(rawMsg);
+    delete [] rawMsg;
 }
 
 void UiEventProcessor::onRegisterClicked(const QString &name, const QString &password)
 {
     qDebug() << "Trying to register in with name:" << name << "and pwd: " << password;
-    connection->sendRawMessage(JsonFactory::registerJson(name, password).c_str());
+    char * rawMsg = JsonFactory::registerJson(name, password).c_str();
+    connection->sendRawMessage(rawMsg);
+    delete [] rawMsg;
 }

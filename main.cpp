@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
 
     if (!connection->init()) {
         qDebug() <<  "Couldn't init connection";
-//        uiProcessor->connectionFailed();
     }
 
     return app.exec();

@@ -12,12 +12,16 @@ Rectangle {
     Connections {
         target: MessageHandler
         function onMessageReceived(sender, msg) {
+            const jsObj = {
+                smth: "asj"
+            }
+
             console.log("Appending message from client: ", sender, ": ", msg)
             const isMy = (name.text === sender)
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
             const msgBackgroundColor = (isMy) ? "white" : "#a61547"
             const msgColor = (isMy) ? "black" : "white"
-            let msgWidth = msg.length * 8 + 20
+            let msgWidth = Math.max(msg.length, Math.round(sender.length * 0.9)) * 12 + 15
             const msgHeight = Math.ceil(msgWidth / 350) * 20 + (isMy ? 20 : 30)
             msgWidth = Math.min(msgWidth, 350)
             const msgSender = sender
@@ -55,7 +59,7 @@ Rectangle {
                                               text: "${msg}"
                                               anchors.fill: parent
                                               font.pixelSize: 16
-                                              wrapMode: Text.WordWrap
+                                              wrapMode: Text.Wrap
                                               horizontalAlignment: Text.AlignHLeft
                                               verticalAlignment: Text.AlignVCenter
                                               anchors.rightMargin: 10

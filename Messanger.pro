@@ -7,6 +7,7 @@ QT += quickcontrols2
 
 SOURCES += \
         actionhandler.cpp \
+        connectionservice.cpp \
         jsonfactory.cpp \
         loginactionhandler.cpp \
         main.cpp \
@@ -38,6 +39,7 @@ DISTFILES += \
 HEADERS += \
     actionhandler.h \
     communication.h \
+    connectionservice.h \
     jsonconstants.h \
     jsonfactory.h \
     loginactionhandler.h \
