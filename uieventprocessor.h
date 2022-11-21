@@ -2,19 +2,21 @@
 #define UIEVENTPROCESSOR_H
 
 #include <QObject>
-#include "socketclient.h"
+#include "socketconnection.h"
 
 class UiEventProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit UiEventProcessor(SocketClient *client, QObject *parent = nullptr);
+    explicit UiEventProcessor(SocketConnection *client, QObject *parent = nullptr);
+    void connectionFailed();
 
 private:
-    SocketClient *connection = nullptr;
+    SocketConnection *connection = nullptr;
 
 signals:
     void appendMessage(QString message);
+    void showConnectionFailed();
 
 public slots:
     void onRegisterClicked(const QString &name, const QString &password);

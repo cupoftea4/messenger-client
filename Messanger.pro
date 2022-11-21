@@ -13,7 +13,7 @@ SOURCES += \
         messageactionhandler.cpp \
         registeractionhandler.cpp \
         signalsconnector.cpp \
-        socketclient.cpp \
+        socketconnection.cpp \
         uieventprocessor.cpp
 
 RESOURCES += \
@@ -44,5 +44,5 @@ HEADERS += \
     messageactionhandler.h \
     registeractionhandler.h \
     signalsconnector.h \
-    socketclient.h \
+    socketconnection.h \
     uieventprocessor.h

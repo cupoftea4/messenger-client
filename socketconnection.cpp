@@ -1,4 +1,4 @@
-#include "socketclient.h"
+#include "socketconnection.h"
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QFile>
@@ -28,14 +28,14 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     return tokens;
 }
 
-SocketClient::SocketClient(std::string ip, std::map<QString, ActionHandler*> &handles) {
+SocketConnection::SocketConnection(std::string ip, std::map<QString, ActionHandler*> &handles) {
     std::vector<std::string> splitted = split(ip, ":");
     this->ip = splitted[0];
     this->port = splitted.size() > 1 ? splitted[1] : DEFAULT_PORT;
     this->actionHandles = handles;
 }
 
-bool SocketClient::init() {
+bool SocketConnection::init() {
     WSADATA wsaData;
 
     int iResult;
@@ -96,15 +96,15 @@ bool SocketClient::init() {
     return true;
 }
 
-bool SocketClient::isInited() {
+bool SocketConnection::isInited() {
     return sock != INVALID_SOCKET;
 }
 
-bool SocketClient::isServer() {
+bool SocketConnection::isServer() {
     return false;
 }
 
-void SocketClient::disconnect() {
+void SocketConnection::disconnect() {
     int pid = GetCurrentProcessId();
     std::string s = "L:";
     s+=std::to_string(pid);
@@ -115,7 +115,7 @@ void SocketClient::disconnect() {
     WSACleanup();
 }
 
-void SocketClient::startCheckingMessages() {
+void SocketConnection::startCheckingMessages() {
     std::thread thread([this] {
         int bufSize = 1024*1024;
         int iResult = 0;
@@ -142,6 +142,8 @@ void SocketClient::startCheckingMessages() {
                     actionHandles[action]->handler(obj);
                 }
 
+            } else if (iResult == 0) {
+                qDebug() << "Something went wrong. Connection lost";
             }
             std::this_thread::sleep_for(50ms);
             delete[] chBuf;
@@ -150,16 +152,16 @@ void SocketClient::startCheckingMessages() {
     thread.detach();
 }
 
-void SocketClient::sendRawMessage(const char* chBuf) {
+void SocketConnection::sendRawMessage(const char* chBuf) {
     send(sock, chBuf, strlen(chBuf), 0 );
 }
 
 
-void SocketClient::notifyServerJoin() {
+void SocketConnection::notifyServerJoin() {
     int pid = GetCurrentProcessId();
     sendRawMessage(JsonFactory::sendMsgJson(QString::number(pid)).c_str());
 }
 
-void SocketClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
+void SocketConnection::setMessageReceiver(std::function<void(std::wstring)> lambda) {
     renderMessage = lambda;
 }

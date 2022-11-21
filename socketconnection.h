@@ -1,5 +1,5 @@
-#ifndef SOCKETCLIENT_H
-#define SOCKETCLIENT_H
+#ifndef SOCKETCONNECTION_H
+#define SOCKETCONNECTION_H
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -16,10 +16,10 @@
 
 using namespace std::chrono_literals;
 
-class SocketClient : public Communication
+class SocketConnection : public Communication
 {
 public:
-    SocketClient(std::string ip, std::map<QString, ActionHandler*> &handles);
+    SocketConnection(std::string ip, std::map<QString, ActionHandler*> &handles);
     bool init() override;
     bool isInited() override;
     bool isServer() override;
@@ -41,4 +41,4 @@ private:
 };
 
 
-#endif // SOCKETCLIENT_H
+#endif // SOCKETCONNECTION_H

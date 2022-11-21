@@ -1,9 +1,14 @@
 #include "uieventprocessor.h"
 
-UiEventProcessor::UiEventProcessor(SocketClient *client, QObject *parent)
+UiEventProcessor::UiEventProcessor(SocketConnection *client, QObject *parent)
     : QObject{parent}
 {
     this->connection = client;
+}
+
+void UiEventProcessor::connectionFailed()
+{
+    emit showConnectionFailed();
 }
 
 
