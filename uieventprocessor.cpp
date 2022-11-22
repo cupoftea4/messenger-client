@@ -1,60 +1,58 @@
 #include "uieventprocessor.h"
 
-UiEventProcessor::UiEventProcessor(SocketConnection *client, QObject *parent)
+UiEventProcessor::UiEventProcessor(ConnectionProvider *provider, QObject *parent)
     : QObject{parent}
 {
-    this->connection = client;
+    this->connectionProvider = provider;
 }
 
-void UiEventProcessor::connectionFailed()
+UiEventProcessor::~UiEventProcessor()
 {
-    emit showConnectionFailed();
-}
-
-void UiEventProcessor::disconnect()
-{
-    connection->disconnect();
-}
-
-
-void UiEventProcessor::onMessageSend(QString message)
-{
-    qDebug() << "Trying to send message:" << message;
-    char * rawMsg = JsonFactory::sendMsgJson(message).c_str();
-    connection->sendRawMessage(rawMsg);
-    delete [] rawMsg;
+    connectionProvider->setActiveConnection(NONE);
+    delete connectionProvider;
 }
 
 void UiEventProcessor::onSocketsConnectionClicked()
 {
     qDebug() << "Sockets button clicked";
-    emit socketsConnected();
+    if (connectionProvider->setActiveConnection(SOCKETS)) {
+        emit socketsConnected();
+    } else {
+        emit connectionFailed();
+    }
 }
 
 void UiEventProcessor::onPipesConnectionClicked()
 {
     qDebug() << "Pipes button clicked";
-    emit pipesConnected();
+    if (connectionProvider->setActiveConnection(PIPES)) {
+        emit pipesConnected();
+    } else {
+        emit connectionFailed();
+    }
 }
 
 void UiEventProcessor::onMailslotsConnectionClicked()
 {
     qDebug() << "Mailslots button clicked";
-    emit mailslotsConnected();
+    if (connectionProvider->setActiveConnection(MAILSLOTS)) {
+        emit mailslotsConnected();
+    } else {
+        emit connectionFailed();
+    }
+}
+
+void UiEventProcessor::onMessageSend(QString message)
+{
+    connectionProvider->sendChatMessage(message);
 }
 
 void UiEventProcessor::onLoginClicked(const QString &name, const QString &password)
 {
-    qDebug() << "Trying to login in with name:" << name << "and pwd: " << password;
-    char * rawMsg = JsonFactory::loginJson(name, password).c_str();
-    connection->sendRawMessage(rawMsg);
-    delete [] rawMsg;
+    connectionProvider->sendLoginMessage(name, password);
 }
 
 void UiEventProcessor::onRegisterClicked(const QString &name, const QString &password)
 {
-    qDebug() << "Trying to register in with name:" << name << "and pwd: " << password;
-    char * rawMsg = JsonFactory::registerJson(name, password).c_str();
-    connection->sendRawMessage(rawMsg);
-    delete [] rawMsg;
+    connectionProvider->sendRegisterMessage(name, password);
 }

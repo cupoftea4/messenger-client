@@ -2,25 +2,21 @@
 #define UIEVENTPROCESSOR_H
 
 #include <QObject>
-#include "socketconnection.h"
+#include "connectionprovider.h"
 
 class UiEventProcessor : public QObject
 {
     Q_OBJECT
 public:
-    explicit UiEventProcessor(SocketConnection *connection, QObject *parent = nullptr);
-    void connectionFailed();
-    void disconnect();
-private:
-    SocketConnection *connection = nullptr;
+    explicit UiEventProcessor(ConnectionProvider *provider, QObject *parent = nullptr);
+    ~UiEventProcessor();
 
 signals:
-    void appendMessage(QString message);
-    void showConnectionFailed();
-
     void socketsConnected();
     void pipesConnected();
     void mailslotsConnected();
+
+    void connectionFailed();
 
 public slots:
     void onRegisterClicked(const QString &name, const QString &password);
@@ -30,6 +26,9 @@ public slots:
     void onSocketsConnectionClicked();
     void onPipesConnectionClicked();
     void onMailslotsConnectionClicked();
+
+private:
+    ConnectionProvider *connectionProvider = nullptr;
 
 
 };

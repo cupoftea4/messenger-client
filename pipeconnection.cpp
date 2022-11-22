@@ -1,11 +1,11 @@
-#include "pipeclient.h"
+#include "pipeconnection.h"
 
-PipeClient::PipeClient()
+PipeConnection::PipeConnection(ServerEventService *serverEventService)
 {
-
+    this->serverEventService = serverEventService;
 }
 
-bool PipeClient::init() {
+bool PipeConnection::init() {
     int pid = GetCurrentProcessId();
     std::wstring clientSlotName = L"\\\\.\\pipe\\messenger_client_" + std::to_wstring(pid);
     pipeName = const_cast<wchar_t *>(clientSlotName.c_str());
@@ -45,15 +45,15 @@ bool PipeClient::init() {
     return true;
 }
 
-bool PipeClient::isInited() {
+bool PipeConnection::isInited() {
     return pipe != NULL && serverSlot != NULL && serverPipe != NULL;
 }
 
-bool PipeClient::isServer() {
+bool PipeConnection::isServer() {
     return false;
 }
 
-void PipeClient::notifyServerJoin() {
+void PipeConnection::notifyServerJoin() {
     int pid = GetCurrentProcessId();
     DWORD bytesWritten = 0;
     std::wstring message = L"J:"+std::to_wstring(pid);
@@ -65,7 +65,7 @@ void PipeClient::notifyServerJoin() {
          (LPOVERLAPPED) NULL);
 }
 
-void PipeClient::disconnect() {
+void PipeConnection::disconnect() {
     if(!isInited()) return;
     int pid = GetCurrentProcessId();
     DWORD bytesWritten = 0;
@@ -84,9 +84,9 @@ void PipeClient::disconnect() {
     pipe = NULL;
 }
 
-void PipeClient::sendMessage(std::wstring message) {
+void PipeConnection::sendRawMessage(const char *message) {
     DWORD bytesWritten = 0;
-    std::wstring prefixed = L"M:"+message;
+    std::wstring prefixed = L"M:" + QString(message).toStdWString();
     LPCVOID msg = prefixed.c_str();
     WriteFile(serverPipe,
          msg,
@@ -95,7 +95,7 @@ void PipeClient::sendMessage(std::wstring message) {
          (LPOVERLAPPED) NULL);
 }
 
-void PipeClient::startCheckingMessages() {
+void PipeConnection::startCheckingMessages() {
     std::thread thread([this](){
         int bufSize = 1024*1024;
         while(pipe != NULL) {
@@ -109,22 +109,19 @@ void PipeClient::startCheckingMessages() {
                  &readSize,  // number of bytes read
                  NULL);
 
-            if(success) {
-                std::wstring str(chBuf);
-                switch(str[0]) {
-                    case L'D': //message
-                        if(messageHandler) messageHandler(L"<i>Сервер закрив з'єднання!</i>");
-                        break;
-                    case L'M': //message
-                        str.erase(0, 2);
-                        if(messageHandler) messageHandler(str);
-                        break;
-                    case L'J': //server added connection
-                        addServerPipe();
-                        break;
-                    default: //ignore
-                        break;
+            if (success) {
+                char *str;
+                wcstombs(str, chBuf, wcslen(chBuf) + 1);
+                qDebug() << "Received information: " << str;
+                QJsonParseError jsonError;
+                QJsonDocument document = QJsonDocument::fromJson(str, &jsonError);
+                if(jsonError.error != QJsonParseError::NoError || !document.isObject()) {
+                    qDebug() << "Error json upload";
+                    continue;
                 }
+                QJsonObject obj(document.object());
+                serverEventService->handleEvent(obj);
+
             }
 
             std::this_thread::sleep_for(50ms);
@@ -133,7 +130,7 @@ void PipeClient::startCheckingMessages() {
     thread.detach();
 }
 
-void PipeClient::addServerPipe() {
+void PipeConnection::addServerPipe() {
     int pid = GetCurrentProcessId();
     std::wstring slotName = L"\\\\.\\pipe\\messenger_server_" + std::to_wstring(pid);
     HANDLE hServer = CreateFile(slotName.c_str(),
@@ -148,6 +145,6 @@ void PipeClient::addServerPipe() {
     }
 }
 
-void PipeClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
+void PipeConnection::setMessageReceiver(std::function<void(std::wstring)> lambda) {
     messageHandler = lambda;
 }

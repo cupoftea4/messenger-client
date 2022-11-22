@@ -1,8 +1,10 @@
-#include "mailslotclient.h"
+#include "mailslotconnection.h"
 
-MailslotClient::MailslotClient(){}
+MailslotConnection::MailslotConnection(ServerEventService *serverEventService) {
+   this->serverEventService = serverEventService;
+}
 
-bool MailslotClient::init() {
+bool MailslotConnection::init() {
     int pid = GetCurrentProcessId();
     std::wstring clientSlotName = L"\\\\.\\mailslot\\messenger_client_";
     clientSlotName += std::to_wstring(pid);
@@ -37,15 +39,15 @@ bool MailslotClient::init() {
     return true;
 }
 
-bool MailslotClient::isInited() {
+bool MailslotConnection::isInited() {
     return slot != NULL && serverSlot != NULL;
 }
 
-bool MailslotClient::isServer() {
+bool MailslotConnection::isServer() {
     return false;
 }
 
-void MailslotClient::notifyServerJoin() {
+void MailslotConnection::notifyServerJoin() {
     int pid = GetCurrentProcessId();
     DWORD bytesWritten = 0;
     std::wstring message = L"J:"+std::to_wstring(pid);
@@ -57,7 +59,7 @@ void MailslotClient::notifyServerJoin() {
          (LPOVERLAPPED) NULL);
 }
 
-void MailslotClient::disconnect() {
+void MailslotConnection::disconnect() {
     if(!isInited()) return;
     int pid = GetCurrentProcessId();
     DWORD bytesWritten = 0;
@@ -74,7 +76,7 @@ void MailslotClient::disconnect() {
     slot = NULL;
 }
 
-void MailslotClient::sendRawMessage(const char * message) {
+void MailslotConnection::sendRawMessage(const char * message) {
     DWORD bytesWritten = 0;
     std::wstring prefixed = L"M:" + QString(message).toStdWString();
     LPCVOID msg = prefixed.c_str();
@@ -85,7 +87,7 @@ void MailslotClient::sendRawMessage(const char * message) {
          (LPOVERLAPPED) NULL);
 }
 
-void MailslotClient::startCheckingMessages() {
+void MailslotConnection::startCheckingMessages() {
     std::thread thread([this](){
         DWORD nextSize = 0, messagesLeft = 0;
         while(slot != NULL) {
@@ -106,18 +108,22 @@ void MailslotClient::startCheckingMessages() {
                      NULL);
 
                 if(success) {
-                    std::wstring str(chBuf);
-                    switch(str[0]) {
-                        case L'D': //message
-                            if(messageHandler) messageHandler(L"<i>Сервер закрив з'єднання!</i>");
-                            break;
-                        case L'M': //message
-                            str.erase(0, 2);
-                            if(messageHandler) messageHandler(str);
-                            break;
-                        default: //ignore
-                            break;
+                    char *str;
+                    wcstombs(str, chBuf, wcslen(chBuf) + 1);
+                    qDebug() << "Received information: " << str;
+                    QJsonParseError jsonError;
+                    QJsonDocument document = QJsonDocument::fromJson(str, &jsonError);
+                    if(jsonError.error != QJsonParseError::NoError){
+                        qDebug() << "Error json upload";
+                        continue;
                     }
+                    std::string type;
+                    if(!document.isObject())
+                    {
+                        continue;
+                    }
+                    QJsonObject obj(document.object());
+                    serverEventService->handleEvent(obj);
                 }
             }
 
@@ -127,6 +133,6 @@ void MailslotClient::startCheckingMessages() {
     thread.detach();
 }
 
-void MailslotClient::setMessageReceiver(std::function<void(std::wstring)> lambda) {
+void MailslotConnection::setMessageReceiver(std::function<void(std::wstring)> lambda) {
     messageHandler = lambda;
 }
