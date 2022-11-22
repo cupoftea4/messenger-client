@@ -26,12 +26,16 @@ Rectangle {
     }
 
     Connections {
+        target: ServerEventService
+        function onShowServerDisconnected() {
+            console.log("Lost connection with server")
+            rectangle.state = "base"
+        }
+    }
+
+    Connections {
         target: MessageHandler
         function onMessageReceived(sender, msg) {
-            const jsObj = {
-                smth: "asj"
-            }
-
             console.log("Appending message from client: ", sender, ": ", msg)
             const isMy = (name.text === sender)
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
@@ -734,6 +738,7 @@ and contain only latin letters or digits"
             Connections {
                 function onClicked() {
                     send_btn.sendMessage(message.text)
+                    message.text = ""
                 }
             }
         }

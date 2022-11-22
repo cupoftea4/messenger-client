@@ -138,6 +138,8 @@ void SocketConnection::startCheckingMessages() {
 
             } else if (iResult == 0) {
                 qDebug() << "Something went wrong. Connection lost";
+                serverEventService->handleDisconnect();
+                disconnect();
             }
             std::this_thread::sleep_for(50ms);
             delete[] chBuf;

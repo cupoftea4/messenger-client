@@ -18,6 +18,7 @@ public:
 private:
     void connectHandlers(QQuickView *view, ServerEventService *eventService);
     void connectUiProcessor(QQuickView *view, UiEventProcessor *uiProcessor);
+    void connectServerEventService(QQuickView *view, ServerEventService *eventService);
 
     bool connectRegisterHandler(QQuickView *view, ActionHandler* handler);
     bool connectMessageHandler(QQuickView *view,  ActionHandler* handler);

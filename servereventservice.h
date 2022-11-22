@@ -12,13 +12,13 @@ class ServerEventService : public QObject
 {
     Q_OBJECT
 public:
-    explicit ServerEventService(map<QString, ActionHandler *> *handlers, QObject *parent = nullptr);
+    explicit ServerEventService(map<QString, ActionHandler *> handlers, QObject *parent = nullptr);
 
     void handleEvent(QJsonObject json);
     void handleDisconnect(); // on lost connection with server
     map<QString, ActionHandler *> getHandlers();
 private:
-    map<QString, ActionHandler *> *actionHandles = nullptr;
+    map<QString, ActionHandler *> actionHandles;
 
 
 signals:

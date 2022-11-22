@@ -7,21 +7,18 @@ bool MessengerConfiguration::init()
     return getSignalsConnector() != nullptr;
 }
 
-map<QString, ActionHandler *> *MessengerConfiguration::getHandlers()
+map<QString, ActionHandler *> MessengerConfiguration::getHandlers()
 {
-//    qDebug() << "Map is empty?: " << handlers.empty();
-    if (handlers != nullptr) {
+    if (!handlers.empty()) {
         return handlers;
     }
-    handlers = new map<QString, ActionHandler *>;
     ActionHandler *msgHandler = new MessageActionHandler;
     ActionHandler *loginHandler = new LoginActionHandler;
     ActionHandler *registerHandler = new RegisterActionHandler;
 
-    (*handlers)[ACTION_MESSAGE] = msgHandler;
-    (*handlers)[ACTION_LOGIN] = loginHandler;
-    (*handlers)[ACTION_REGISTER] = registerHandler;
-    qDebug() << "Map size in config: " << handlers->size();
+    handlers[ACTION_MESSAGE] = msgHandler;
+    handlers[ACTION_LOGIN] = loginHandler;
+    handlers[ACTION_REGISTER] = registerHandler;
 
     return handlers;
 }
@@ -39,9 +36,9 @@ map<ConnectionType, Connection *> MessengerConfiguration::getConnections()
     if (!connections.empty())
         return connections;
 
-    Connection *socketConnection = new SocketConnection(serverEventService);
-    Connection *pipeConnection = new PipeConnection(serverEventService);
-    Connection *mailslotConnection = new MailslotConnection(serverEventService);
+    Connection *socketConnection = new SocketConnection(getServerEventService());
+    Connection *pipeConnection = new PipeConnection(getServerEventService());
+    Connection *mailslotConnection = new MailslotConnection(getServerEventService());
 
     connections[SOCKETS] = socketConnection;
     connections[PIPES] = pipeConnection;

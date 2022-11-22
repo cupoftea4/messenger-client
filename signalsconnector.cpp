@@ -9,6 +9,7 @@ SignalsConnector::SignalsConnector(QObject *parent)
 bool SignalsConnector::connect(QQuickView *view, ServerEventService *eventService, UiEventProcessor *uiProcessor)
 {
     connectUiProcessor(view, uiProcessor);
+    connectServerEventService(view, eventService);
 
     map<QString, ActionHandler *> handlers = eventService->getHandlers();
     if (handlers.find(ACTION_MESSAGE) != handlers.end()) {
@@ -41,6 +42,18 @@ void SignalsConnector::connectUiProcessor(QQuickView *view, UiEventProcessor *ui
     connectConnctionTypeButtons(root, uiProcessor);
     connectActionButtons(root, uiProcessor);
 
+}
+
+void SignalsConnector::connectServerEventService(QQuickView *view, ServerEventService *eventService)
+{
+    QObject *root = view->rootObject();
+
+    // add server event service as ui target
+    view->engine()->rootContext()->setContextProperty("ServerEventService", eventService);
+
+    // ui slots connects
+    QObject::connect(eventService, SIGNAL(showServerDisconnected()),
+                        root, SLOT(onShowServerDisconnected()), Qt::QueuedConnection);
 }
 
 bool SignalsConnector::connectRegisterHandler(QQuickView *view, ActionHandler* handler)

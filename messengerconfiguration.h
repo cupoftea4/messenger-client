@@ -24,17 +24,17 @@ public:
     bool init();
 
 private:
-    map<QString, ActionHandler *>  *getHandlers(); // if empty, create and put `ActionHandler *`s into map
-    ServerEventService *getServerEventService(); // if nullptr, create. Call getHandlers(). Return
-    map<ConnectionType, Connection *> getConnections(); // if empty, create and put Connection *`s into map
-    ConnectionProvider *getConnectionProvider(); // if nullptr, create. Return
-    UiEventProcessor *getUiEventProcessor(); // if nullptr, create. Return
-    QQuickView *getQuickView(); // if nullptr, create. Return
-    SignalsConnector *getSignalsConnector(); // if nullptr, create. Return
+    map<QString, ActionHandler *>  getHandlers();
+    ServerEventService *getServerEventService();
+    map<ConnectionType, Connection *> getConnections();
+    ConnectionProvider *getConnectionProvider();
+    UiEventProcessor *getUiEventProcessor();
+    QQuickView *getQuickView();
+    SignalsConnector *getSignalsConnector();
 
-    map<QString, ActionHandler *> * handlers = nullptr;
+    map<QString, ActionHandler *> handlers;
     ServerEventService *serverEventService = nullptr;
-    map<ConnectionType, Connection *> connections = map<ConnectionType, Connection *>();
+    map<ConnectionType, Connection *> connections;
     ConnectionProvider *connectionProvider = nullptr;
     UiEventProcessor *uiEventProcessor = nullptr;
     QQuickView *quickView = nullptr;
