@@ -4,7 +4,6 @@
 SignalsConnector::SignalsConnector(QObject *parent)
     : QObject{parent}
 {
-
 }
 
 bool SignalsConnector::connectRegisterHandler(QQuickView& view, ActionHandler* handler, UiEventProcessor *uiProcessor)
@@ -75,6 +74,31 @@ bool SignalsConnector::connectLoginHandler(QQuickView &view, ActionHandler *hand
 bool SignalsConnector::connectSignals(QQuickView& view, std::map<QString, ActionHandler*> handlers, UiEventProcessor *uiProcessor)
 {
     // TODO: refactor this
+    QObject *root = view.rootObject();
+    QObject *socketsButton = root->findChild<QObject*>("sockets_btn");
+    QObject *pipesButton = root->findChild<QObject*>("pipes_btn");
+    QObject *mailslotsButton = root->findChild<QObject*>("mailslots_btn");
+
+    view.engine()->rootContext()->setContextProperty("UiProcessor", uiProcessor);
+    QObject::connect(uiProcessor, SIGNAL(socketsConnected()),
+                        root, SLOT(onSocketsConnected()), Qt::QueuedConnection);
+    QObject::connect(uiProcessor, SIGNAL(pipesConnected()),
+                        root, SLOT(onPipesConnected()), Qt::QueuedConnection);
+    QObject::connect(uiProcessor, SIGNAL(mailslotsConnected()),
+                        root, SLOT(onMailslotsConnected()), Qt::QueuedConnection);
+
+    if (socketsButton == nullptr || pipesButton == nullptr || mailslotsButton == nullptr)
+        return false;
+
+
+    // connects
+    QObject::connect(socketsButton, SIGNAL(socketsClicked()),
+                        uiProcessor, SLOT(onSocketsConnectionClicked()));
+    QObject::connect(pipesButton, SIGNAL(pipesClicked()),
+                        uiProcessor, SLOT(onPipesConnectionClicked()));
+    QObject::connect(mailslotsButton, SIGNAL(mailslotsClicked()),
+                        uiProcessor, SLOT(onMailslotsConnectionClicked()));
+
 
     if (handlers.find(ACTION_MESSAGE) != handlers.end()) {
         connectMessageHandler(view, handlers[ACTION_MESSAGE], uiProcessor);

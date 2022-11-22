@@ -105,6 +105,7 @@ bool SocketConnection::isServer() {
 }
 
 void SocketConnection::disconnect() {
+    qDebug() << "Disconneting sockets";
     int pid = GetCurrentProcessId();
     std::string s = "L:";
     s+=std::to_string(pid);

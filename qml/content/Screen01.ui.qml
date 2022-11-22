@@ -10,6 +10,22 @@ Rectangle {
     color: "#1b1b1b"
 
     Connections {
+        target: UiProcessor
+        function onSocketsConnected() {
+            rectangle.state = "login";
+            console.log("Sockets connected");
+        }
+        function onPipesConnected() {
+            rectangle.state = "chat";
+            console.log("Pipes connected");
+        }
+        function onMailslotsConnected() {
+            rectangle.state = "chat";
+            console.log("Mailslots connected");
+        }
+    }
+
+    Connections {
         target: MessageHandler
         function onMessageReceived(sender, msg) {
             const jsObj = {
@@ -138,16 +154,20 @@ Rectangle {
             highlighted: true
             flat: false
 
+            signal socketsClicked()
+
             Connections {
                 target: sockets_btn
                 function onClicked() {
-                    rectangle.state = "login"
+                    sockets_btn.socketsClicked();
+//                    rectangle.state = "login"
                 }
             }
         }
 
         Button {
             id: pipes_btn
+            objectName: "pipes_btn"
             height: 48
             text: qsTr("PIPES")
             anchors.left: parent.left
@@ -156,6 +176,15 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
+
+            signal pipesClicked()
+
+            Connections {
+                target: pipes_btn
+                function onClicked() {
+                    pipes_btn.pipesClicked();
+                }
+            }
         }
 
         Button {
@@ -169,7 +198,15 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-            Connections {}
+
+            signal mailslotsClicked()
+
+            Connections {
+                target: mailslots_btn
+                function onClicked() {
+                    mailslots_btn.mailslotsClicked();
+                }
+            }
         }
 
         TextField {

@@ -10,8 +10,11 @@ SOURCES += \
         connectionservice.cpp \
         jsonfactory.cpp \
         loginactionhandler.cpp \
+        mailslotclient.cpp \
         main.cpp \
         messageactionhandler.cpp \
+        pipeclient.cpp \
+        quickviewwrapper.cpp \
         registeractionhandler.cpp \
         signalsconnector.cpp \
         socketconnection.cpp \
@@ -43,7 +46,10 @@ HEADERS += \
     jsonconstants.h \
     jsonfactory.h \
     loginactionhandler.h \
+    mailslotclient.h \
     messageactionhandler.h \
+    pipeclient.h \
+    quickviewwrapper.h \
     registeractionhandler.h \
     signalsconnector.h \
     socketconnection.h \
