@@ -3,18 +3,21 @@
 
 #include <QObject>
 #include <QQuickItem>
+#include <QQuickView>
+#include <QQmlContext>
+#include "actionhandler.h"
+#include "uieventprocessor.h"
 
 class SignalsConnector : public QObject
 {
     Q_OBJECT
 public:
     explicit SignalsConnector(QObject *parent = nullptr);
-    bool connectAuthenticationForm(QObject * rootElement);
-public slots:
-    void cppSlot(const QString &name, const QString &password) {
-        qDebug() << "Trying to log in with name:" << name << "and pwd: " << password;
-        emit serverResponse("You can login now");
-    }
+    bool connectSignals(QQuickView& view, std::map<QString, ActionHandler*> handlers, UiEventProcessor *uiProcessor);
+private:
+    bool connectRegisterHandler(QQuickView& view, ActionHandler* handler, UiEventProcessor *uiProcessor);
+    bool connectMessageHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
+    bool connectLoginHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
 
 signals:
     void serverResponse(QString res);

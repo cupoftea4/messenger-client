@@ -4,7 +4,16 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 #include "signalsconnector.h"
-#include "socketclient.h"
+#include "socketconnection.h"
+#include "registeractionhandler.h"
+#include "actionhandler.h"
+#include "messageactionhandler.h"
+#include "jsonfactory.h"
+#include "uieventprocessor.h"
+#include "loginactionhandler.h"
+
+
+std::map<QString, ActionHandler*> createHandlesMap();
 
 int main(int argc, char *argv[])
 {
@@ -13,24 +22,44 @@ int main(int argc, char *argv[])
 #endif
 
     QGuiApplication app(argc, argv);
-    SignalsConnector tester;
+
+    SignalsConnector uiConnector;
+    std::map<QString, ActionHandler*> jsonHandlers = createHandlesMap();
+    SocketConnection *connection = new SocketConnection("localhost", jsonHandlers);
+    UiEventProcessor *uiProcessor = new UiEventProcessor(connection);
+
 
     QQuickView view;
     view.engine()->addImportPath("qrc:/qml/imports");
-    qmlRegisterType<SignalsConnector>("SignalsConnector", 1, 0, "SignalsConnector");
-    view.engine()->rootContext()->setContextProperty("SignalsConnector", &tester);
     QQuickStyle::setStyle("Material");
     view.setSource(QUrl("qrc:/qml/content/Screen01.ui.qml"));
-    if (!view.errors().isEmpty())
+    if (!view.errors().isEmpty()) {
+        delete connection;
+        delete uiProcessor;
         return -1;
+    }
     view.show();
-    QObject *root = view.rootObject();
-    tester.connectAuthenticationForm(root);
 
-    SocketClient client = SocketClient("127.0.0.1");
-    client.init();
-    QString str = "Hey111111111";
-    client.sendMessage(str.toStdWString());
+    uiConnector.connectSignals(view, jsonHandlers, uiProcessor);
+
+    if (!connection->init()) {
+        qDebug() <<  "Couldn't init connection";
+    }
 
     return app.exec();
+}
+
+
+std::map<QString, ActionHandler*> createHandlesMap() {
+    std::map<QString, ActionHandler*> jsonHandlers;
+
+    ActionHandler *registerHandler = new RegisterActionHandler;
+    ActionHandler *messageHandler = new MessageActionHandler;
+    ActionHandler *loginHandler = new LoginActionHandler;
+
+    jsonHandlers[ACTION_REGISTER] = registerHandler;
+    jsonHandlers[ACTION_MESSAGE] = messageHandler;
+    jsonHandlers[ACTION_LOGIN] = loginHandler;
+
+    return jsonHandlers;
 }

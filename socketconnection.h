@@ -1,5 +1,5 @@
-#ifndef SOCKETCLIENT_H
-#define SOCKETCLIENT_H
+#ifndef SOCKETCONNECTION_H
+#define SOCKETCONNECTION_H
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -12,32 +12,33 @@
 #include <iostream>
 #include "communication.h"
 #include "jsonfactory.h"
+#include "registeractionhandler.h"
 
 using namespace std::chrono_literals;
 
-class SocketClient : public Communication
+class SocketConnection : public Communication
 {
 public:
-    SocketClient(std::string ip);
+    SocketConnection(std::string ip, std::map<QString, ActionHandler*> &handles);
     bool init() override;
     bool isInited() override;
     bool isServer() override;
-    void sendMessage(std::wstring) override;
     void setMessageReceiver(std::function<void(std::wstring)>) override;
     void disconnect() override;
-    char* messageToJSON(std::string type,std::wstring str);
 
+    void sendRawMessage(const char*) override;
     const char* DEFAULT_PORT = "12321";
 
 private:
     void startCheckingMessages();
     void notifyServerJoin();
-    void sendRawMessage(char*);
 
     SOCKET sock;
-    std::function<void(std::wstring)> messageHandler;
+    std::function<void(std::wstring)> renderMessage;
     std::string ip = "localhost";
     std::string port = DEFAULT_PORT;
+    std::map<QString, ActionHandler*> actionHandles;
 };
 
-#endif // SOCKETCLIENT_H
+
+#endif // SOCKETCONNECTION_H

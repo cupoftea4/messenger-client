@@ -6,10 +6,19 @@ QT += quickcontrols2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        actionhandler.cpp \
+        connectionservice.cpp \
         jsonfactory.cpp \
+        loginactionhandler.cpp \
+        mailslotclient.cpp \
         main.cpp \
+        messageactionhandler.cpp \
+        pipeclient.cpp \
+        quickviewwrapper.cpp \
+        registeractionhandler.cpp \
         signalsconnector.cpp \
-        socketclient.cpp
+        socketconnection.cpp \
+        uieventprocessor.cpp
 
 RESOURCES += \
         $$files(qml/*)
@@ -31,8 +40,17 @@ DISTFILES += \
     qtquickcontrols2.conf
 
 HEADERS += \
+    actionhandler.h \
     communication.h \
+    connectionservice.h \
     jsonconstants.h \
     jsonfactory.h \
+    loginactionhandler.h \
+    mailslotclient.h \
+    messageactionhandler.h \
+    pipeclient.h \
+    quickviewwrapper.h \
+    registeractionhandler.h \
     signalsconnector.h \
-    socketclient.h
+    socketconnection.h \
+    uieventprocessor.h

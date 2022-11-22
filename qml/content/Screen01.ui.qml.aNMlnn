@@ -9,115 +9,6 @@ Rectangle {
     height: Constants.height
     color: "#1b1b1b"
 
-    Connections {
-        target: UiProcessor
-        function onSocketsConnected() {
-            rectangle.state = "login";
-            console.log("Sockets connected");
-        }
-        function onPipesConnected() {
-            rectangle.state = "chat";
-            console.log("Pipes connected");
-        }
-        function onMailslotsConnected() {
-            rectangle.state = "chat";
-            console.log("Mailslots connected");
-        }
-    }
-
-    Connections {
-        target: MessageHandler
-        function onMessageReceived(sender, msg) {
-            const jsObj = {
-                smth: "asj"
-            }
-
-            console.log("Appending message from client: ", sender, ": ", msg)
-            const isMy = (name.text === sender)
-            const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
-            const msgBackgroundColor = (isMy) ? "white" : "#a61547"
-            const msgColor = (isMy) ? "black" : "white"
-            let msgWidth = Math.max(msg.length, Math.round(sender.length * 0.9)) * 12 + 15
-            const msgHeight = Math.ceil(msgWidth / 350) * 20 + (isMy ? 20 : 30)
-            msgWidth = Math.min(msgWidth, 350)
-            const msgSender = sender
-
-            const newObj = Qt.createQmlObject(`
-                                              import QtQuick 2.0
-                                              Item {
-                                              width: 400
-                                              height: ${msgHeight}
-
-                                              Rectangle {
-                                              id: message_sample
-                                              width: ${msgWidth}
-                                              height: ${msgHeight}
-                                              radius: 15
-                                              color: "${msgBackgroundColor}"
-                                              ${msgAnchors}
-
-                                              Text {
-                                              id: sender
-                                              visible: ${!isMy}
-                                              font.bold: true
-                                              color: "${msgColor}"
-                                              text: "${msgSender}"
-                                              anchors.left: parent.left
-                                              anchors.top: parent.top
-                                              anchors.leftMargin: 10
-                                              anchors.topMargin: 5
-
-                                              }
-
-                                              Text {
-                                              id: msg
-                                              color: "${msgColor}"
-                                              text: "${msg}"
-                                              anchors.fill: parent
-                                              font.pixelSize: 16
-                                              wrapMode: Text.Wrap
-                                              horizontalAlignment: Text.AlignHLeft
-                                              verticalAlignment: Text.AlignVCenter
-                                              anchors.rightMargin: 10
-                                              anchors.leftMargin: 10
-                                              anchors.bottomMargin: 10
-                                              anchors.topMargin: ${isMy ? 10 : 20}
-                                              }
-                                              }
-                                              }
-
-                                              `, messages, "myDynamicSnippet")
-            messages_scroll.ScrollBar.vertical.position = 1.0
-        }
-    }
-
-    Connections {
-        target: RegisterHandler
-        function onFailedRegistration() {
-            console.log("FAILED REGISTRATION")
-            register_error.visible = true
-            register_error.text = "This username is already used."
-        }
-        function onSuccessfulRegistration(receivedName) {
-            console.log("SUCCESSFUL REGISTRATION")
-            rectangle.state = "chat"
-            name.text = receivedName
-        }
-    }
-
-    Connections {
-        target: LoginHandler
-        function onFailedLogin() {
-            console.log("FAILED LOGIN")
-            register_error.visible = true
-            register_error.text = "No such user found. Try again."
-        }
-        function onSuccessfulLogin(receivedName) {
-            console.log("SUCCESSFUL LOGIN")
-            rectangle.state = "chat"
-            name.text = receivedName
-        }
-    }
     Timeline {
         id: timeline
         animations: [
@@ -144,7 +35,6 @@ Rectangle {
 
         Button {
             id: sockets_btn
-            objectName: "sockets_btn"
             height: 48
             text: qsTr("SOCKETS")
             anchors.left: parent.left
@@ -154,20 +44,16 @@ Rectangle {
             highlighted: true
             flat: false
 
-            signal socketsClicked()
-
             Connections {
                 target: sockets_btn
                 function onClicked() {
-                    sockets_btn.socketsClicked();
-//                    rectangle.state = "login"
+                    rectangle.state = "login"
                 }
             }
         }
 
         Button {
             id: pipes_btn
-            objectName: "pipes_btn"
             height: 48
             text: qsTr("PIPES")
             anchors.left: parent.left
@@ -176,20 +62,10 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-
-            signal pipesClicked()
-
-            Connections {
-                target: pipes_btn
-                function onClicked() {
-                    pipes_btn.pipesClicked();
-                }
-            }
         }
 
         Button {
             id: mailslots_btn
-            objectName: "mailslots_btn"
             height: 48
             text: qsTr("MAILSLOTS")
             anchors.left: parent.left
@@ -198,19 +74,10 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-
-            signal mailslotsClicked()
-
-            Connections {
-                target: mailslots_btn
-                function onClicked() {
-                    mailslots_btn.mailslotsClicked();
-                }
-            }
         }
 
         TextField {
-            id: username
+            id: name
             visible: false
             anchors.left: parent.left
             anchors.right: parent.right
@@ -221,7 +88,7 @@ Rectangle {
         }
 
         Text {
-            id: username_error
+            id: name_error
             height: 20
             visible: false
             color: "#ff3a3a"
@@ -282,16 +149,22 @@ Rectangle {
             anchors.rightMargin: 0
             anchors.leftMargin: 0
 
-            signal loginClicked(string username, string password)
+            Connections {
+                target: SignalsConnector
+                function onServerResponse(res) {
+                    console.log(res)
+                }
+            }
+
+            signal qmlSignal(string name, string password)
 
             Connections {
                 target: login_btn
 
                 function onClicked() {
-                    if (username.length < 3 || !username.text.match(
-                                /^[0-9a-z_]+$/)) {
-                        username_error.visible = true
-                        username_error.text = "Name should be at least 3 character long \
+                    if (name.length < 3 || !name.text.match(/^[0-9a-z_]+$/)) {
+                        name_error.visible = true
+                        name_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                         password_error.visible = false
                     } else if (password.length < 6 || !password.text.match(
@@ -299,18 +172,16 @@ and contain only latin letters or digits"
                         password_error.visible = true
                         password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"
-                        username_error.visible = false
+                        name_error.visible = false
                     } else {
-                        login_btn.loginClicked(username.text, password.text)
-                        username_error.visible = false
-                        password_error.visible = false
+                        // TODO: replace with the right signal
+                        login_btn.qmlSignal(name.text, password.text)
                     }
                 }
             }
         }
         Button {
-            id: register_btn
-            objectName: "register_btn"
+            id: signin_btn
             visible: false
             text: qsTr("Register")
             anchors.left: parent.left
@@ -319,16 +190,15 @@ and contain only latin letters or digits"
             highlighted: true
             anchors.rightMargin: 0
             anchors.leftMargin: 0
-            signal registerClicked(string username, string password)
 
             Connections {
-                target: register_btn
+                target: signin_btn
                 function onClicked() {
                     if (rectangle.state === "register") {
-                        if (username.length < 3 || !username.text.match(
+                        if (name.length < 3 || !name.text.match(
                                     /^[0-9a-z_]+$/)) {
-                            username_error.visible = true
-                            username_error.text = "Name should be at least 3 character long \
+                            name_error.visible = true
+                            name_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                             password_error.visible = false
                         } else if (password.length < 6 || !password.text.match(
@@ -336,31 +206,20 @@ and contain only latin letters or digits"
                             password_error.visible = true
                             password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"
-                            username_error.visible = false
+                            name_error.visible = false
                         } else if (password_rep.text !== password.text) {
                             password_error.visible = true
                             password_error.text = "Passwords do no match."
-                            username_error.visible = false
+                            name_error.visible = false
                         } else {
-                            register_btn.registerClicked(username.text, password.text)
+                            // TODO: replace with the right signal
+                            login_btn.qmlSignal(name.text, password.text)
                         }
                     } else {
                         rectangle.state = "register"
                     }
                 }
             }
-        }
-
-        Text {
-            id: register_error
-            visible: false
-            color: "#ff3a3a"
-            text: qsTr("Error")
-            anchors.left: parent.left
-            anchors.right: parent.right
-            font.pixelSize: 12
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
         }
     }
 
@@ -380,18 +239,46 @@ and contain only latin letters or digits"
         }
     }
 
-    Text {
-        id: name
-        x: 169
-        y: 20
-        width: 286
-        height: 40
+    Row {
+        id: message_row
+        y: 572
+        height: 42
         visible: false
-        color: "#ffffff"
-        text: qsTr("Username")
-        font.pixelSize: 24
-        horizontalAlignment: Text.AlignRight
-        font.bold: true
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 25
+        anchors.leftMargin: 25
+        anchors.bottomMargin: 25
+
+        TextField {
+            id: textField
+            anchors.left: parent.left
+            anchors.right: send_btn.left
+            anchors.rightMargin: 15
+            anchors.leftMargin: 0
+            placeholderText: qsTr("Text Field")
+            color: "white"
+        }
+
+        Button {
+            id: send_btn
+            text: qsTr("Send")
+            anchors.right: parent.right
+            font.capitalization: Font.Capitalize
+            highlighted: true
+            anchors.rightMargin: 0
+        }
+    }
+
+    Flow {
+        id: messages
+        x: 39
+        width: 400
+        anchors.top: back_btn.bottom
+        anchors.bottom: message_row.top
+        anchors.topMargin: 10
+        anchors.bottomMargin: 10
     }
 
     states: [
@@ -427,10 +314,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -449,7 +336,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: register_btn
+                target: signin_btn
                 visible: true
                 highlighted: true
                 flat: true
@@ -462,7 +349,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username_error
+                target: name_error
                 x: 130
                 y: 274
                 width: 219
@@ -521,10 +408,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -543,7 +430,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: register_btn
+                target: signin_btn
                 visible: true
                 flat: false
                 highlighted: true
@@ -578,7 +465,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username_error
+                target: name_error
                 wrapMode: Text.WordWrap
             }
         },
@@ -613,10 +500,10 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: username
+                target: name
                 visible: true
                 placeholderTextColor: "#73ffffff"
-                placeholderText: qsTr("username")
+                placeholderText: qsTr("name")
             }
 
             PropertyChanges {
@@ -635,7 +522,7 @@ and contain only latin letters or digits"
             }
 
             PropertyChanges {
-                target: register_btn
+                target: signin_btn
                 visible: true
                 flat: false
                 highlighted: true
@@ -654,8 +541,6 @@ and contain only latin letters or digits"
             PropertyChanges {
                 target: back_btn
                 visible: false
-                flat: false
-                highlighted: false
             }
 
             PropertyChanges {
@@ -668,92 +553,15 @@ and contain only latin letters or digits"
                 target: message_row
                 visible: true
             }
-
-            PropertyChanges {
-                target: name
-                x: 151
-                y: 24
-                width: 297
-                height: 36
-                visible: true
-                color: "#ffffff"
-                text: qsTr("Username")
-                font.pixelSize: 24
-                horizontalAlignment: Text.AlignRight
-                font.bold: true
-            }
-
-            PropertyChanges {
-                target: messages_scroll
-                x: 39
-                y: 66
-                visible: true
-                anchors.topMargin: 56
-                anchors.bottomMargin: 73
-                anchors.rightMargin: 30
-                anchors.leftMargin: 30
-            }
-
-            PropertyChanges {
-                target: message
-                placeholderText: "Type here..."
-                placeholderTextColor: "#b3ffffff"
-            }
         }
     ]
-    Row {
-        id: message_row
-        y: 572
-        height: 42
-        visible: false
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.rightMargin: 25
-        anchors.leftMargin: 25
-        anchors.bottomMargin: 25
-
-        TextField {
-            id: message
-            anchors.left: parent.left
-            anchors.right: send_btn.left
-            anchors.rightMargin: 15
-            anchors.leftMargin: 0
-            color: "white"
-        }
-
-        Button {
-            id: send_btn
-            objectName: "send_btn"
-            text: qsTr("Send")
-            anchors.right: parent.right
-            font.capitalization: Font.Capitalize
-            highlighted: true
-            anchors.rightMargin: 0
-            signal sendMessage(string message)
-            Connections {
-                function onClicked() {
-                    send_btn.sendMessage(message.text)
-                }
-            }
-        }
-    }
-
-    ScrollView {
-        id: messages_scroll
-        visible: false
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: name.top
-        anchors.bottom: message_row.bottom
-        anchors.bottomMargin: 0
-        anchors.topMargin: 0
-
-        Flow {
-            id: messages
-            width: 400
-            anchors.fill: parent
-            spacing: 10
-        }
-    }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:1.25}D{i:1}D{i:5}D{i:4}D{i:6}D{i:7}D{i:8}D{i:9}D{i:10}D{i:11}
+D{i:12}D{i:14}D{i:15}D{i:13}D{i:17}D{i:16}D{i:3}D{i:19}D{i:18}D{i:21}D{i:22}D{i:20}
+D{i:23}
+}
+##^##*/
+

@@ -10,34 +10,14 @@ Rectangle {
     color: "#1b1b1b"
 
     Connections {
-        target: UiProcessor
-        function onSocketsConnected() {
-            rectangle.state = "login";
-            console.log("Sockets connected");
-        }
-        function onPipesConnected() {
-            rectangle.state = "chat";
-            console.log("Pipes connected");
-        }
-        function onMailslotsConnected() {
-            rectangle.state = "chat";
-            console.log("Mailslots connected");
-        }
-    }
-
-    Connections {
         target: MessageHandler
         function onMessageReceived(sender, msg) {
-            const jsObj = {
-                smth: "asj"
-            }
-
             console.log("Appending message from client: ", sender, ": ", msg)
             const isMy = (name.text === sender)
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
             const msgBackgroundColor = (isMy) ? "white" : "#a61547"
             const msgColor = (isMy) ? "black" : "white"
-            let msgWidth = Math.max(msg.length, Math.round(sender.length * 0.9)) * 12 + 15
+            let msgWidth = msg.length * 8 + 20
             const msgHeight = Math.ceil(msgWidth / 350) * 20 + (isMy ? 20 : 30)
             msgWidth = Math.min(msgWidth, 350)
             const msgSender = sender
@@ -75,7 +55,7 @@ Rectangle {
                                               text: "${msg}"
                                               anchors.fill: parent
                                               font.pixelSize: 16
-                                              wrapMode: Text.Wrap
+                                              wrapMode: Text.WordWrap
                                               horizontalAlignment: Text.AlignHLeft
                                               verticalAlignment: Text.AlignVCenter
                                               anchors.rightMargin: 10
@@ -154,20 +134,17 @@ Rectangle {
             highlighted: true
             flat: false
 
-            signal socketsClicked()
-
             Connections {
                 target: sockets_btn
                 function onClicked() {
-                    sockets_btn.socketsClicked();
-//                    rectangle.state = "login"
+                    console.log("sockets clicked????")
+                    rectangle.state = "login"
                 }
             }
         }
 
         Button {
             id: pipes_btn
-            objectName: "pipes_btn"
             height: 48
             text: qsTr("PIPES")
             anchors.left: parent.left
@@ -176,15 +153,6 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-
-            signal pipesClicked()
-
-            Connections {
-                target: pipes_btn
-                function onClicked() {
-                    pipes_btn.pipesClicked();
-                }
-            }
         }
 
         Button {
@@ -198,15 +166,7 @@ Rectangle {
             anchors.rightMargin: 0
             flat: true
             highlighted: true
-
-            signal mailslotsClicked()
-
-            Connections {
-                target: mailslots_btn
-                function onClicked() {
-                    mailslots_btn.mailslotsClicked();
-                }
-            }
+            Connections {}
         }
 
         TextField {
@@ -301,6 +261,7 @@ and contain only latin letters or digits"
 and contain only latin letters or digits"
                         username_error.visible = false
                     } else {
+                        // TODO: replace with the right signal
                         login_btn.loginClicked(username.text, password.text)
                         username_error.visible = false
                         password_error.visible = false
@@ -342,7 +303,9 @@ and contain only latin letters or digits"
                             password_error.text = "Passwords do no match."
                             username_error.visible = false
                         } else {
-                            register_btn.registerClicked(username.text, password.text)
+                            // TODO: replace with the right signal
+                            register_btn.registerClicked(username.text,
+                                                         password.text)
                         }
                     } else {
                         rectangle.state = "register"
@@ -687,7 +650,6 @@ and contain only latin letters or digits"
                 target: messages_scroll
                 x: 39
                 y: 66
-                visible: true
                 anchors.topMargin: 56
                 anchors.bottomMargin: 73
                 anchors.rightMargin: 30
@@ -696,7 +658,6 @@ and contain only latin letters or digits"
 
             PropertyChanges {
                 target: message
-                placeholderText: "Type here..."
                 placeholderTextColor: "#b3ffffff"
             }
         }
@@ -741,7 +702,6 @@ and contain only latin letters or digits"
 
     ScrollView {
         id: messages_scroll
-        visible: false
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: name.top
@@ -757,3 +717,11 @@ and contain only latin letters or digits"
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:1.25}D{i:1}D{i:2}D{i:6}D{i:5}D{i:7}D{i:8}D{i:9}D{i:10}D{i:11}
+D{i:12}D{i:13}D{i:15}D{i:14}D{i:17}D{i:16}D{i:18}D{i:4}D{i:20}D{i:19}D{i:21}D{i:22}
+D{i:71}D{i:72}D{i:70}
+}
+##^##*/

@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <string>
+#include <QObject>
 
 class Communication {
 
@@ -11,7 +12,7 @@ public:
     virtual bool init() = 0;
     virtual bool isInited() = 0;
     virtual bool isServer() = 0;
-    virtual void sendMessage(std::wstring) = 0;
+    virtual void sendRawMessage(const char *) = 0;
     virtual void setMessageReceiver(std::function<void(std::wstring)>) = 0;
     virtual void disconnect() = 0;
 
