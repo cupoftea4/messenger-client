@@ -108,7 +108,7 @@ void MailslotConnection::startCheckingMessages() {
                      NULL);
 
                 if(success) {
-                    char *str;
+                    char *str = "";
                     wcstombs(str, chBuf, wcslen(chBuf) + 1);
                     qDebug() << "Received information: " << str;
                     QJsonParseError jsonError;

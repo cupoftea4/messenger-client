@@ -79,11 +79,12 @@ QQuickView *MessengerConfiguration::getQuickView()
 
 SignalsConnector *MessengerConfiguration::getSignalsConnector()
 {
+    if (signalsConnector != nullptr)
+        return signalsConnector;
+
     QQuickView * view = getQuickView();
     if (view == nullptr)
         return nullptr;
-    if (signalsConnector != nullptr)
-        return signalsConnector;
 
     signalsConnector = new SignalsConnector();
     signalsConnector->connect(view, getServerEventService(), getUiEventProcessor());
