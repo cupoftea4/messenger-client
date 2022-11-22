@@ -5,7 +5,7 @@ MessageActionHandler::MessageActionHandler()
 
 }
 
-bool MessageActionHandler::handler(QJsonObject json)
+bool MessageActionHandler::handle(QJsonObject json)
 {
     auto sender = json.take(FIELD_USERNAME).toString();
     auto message = json.take(FIELD_PAYLOAD).toString();

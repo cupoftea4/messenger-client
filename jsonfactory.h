@@ -12,7 +12,6 @@ public:
         QJsonDocument document;
         document.setObject(*this);
         QByteArray bytes = document.toJson(QJsonDocument::Indented);
-        qDebug() << "c_str length: " << strlen(bytes.data());
         std::string jsonString = bytes.toStdString();
         char *cstr = new char[jsonString.length() + 1];
         strncpy(cstr, jsonString.c_str(), jsonString.length() + 1);

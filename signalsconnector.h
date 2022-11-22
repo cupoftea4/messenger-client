@@ -5,7 +5,7 @@
 #include <QQuickItem>
 #include <QQuickView>
 #include <QQmlContext>
-#include "actionhandler.h"
+#include "servereventservice.h"
 #include "uieventprocessor.h"
 
 class SignalsConnector : public QObject
@@ -13,14 +13,21 @@ class SignalsConnector : public QObject
     Q_OBJECT
 public:
     explicit SignalsConnector(QObject *parent = nullptr);
-    bool connectSignals(QQuickView& view, std::map<QString, ActionHandler*> handlers, UiEventProcessor *uiProcessor);
-private:
-    bool connectRegisterHandler(QQuickView& view, ActionHandler* handler, UiEventProcessor *uiProcessor);
-    bool connectMessageHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
-    bool connectLoginHandler(QQuickView& view,  ActionHandler* handler, UiEventProcessor *uiProcessor);
+    bool connect(QQuickView *view, ServerEventService *eventService, UiEventProcessor *uiProcessor);
 
-signals:
-    void serverResponse(QString res);
+private:
+    // TODO: refactor return types
+    void connectHandlers(QQuickView *view, ServerEventService *eventService);
+    void connectUiProcessor(QQuickView *view, UiEventProcessor *uiProcessor);
+    void connectServerEventService(QQuickView *view, ServerEventService *eventService);
+
+    bool connectRegisterHandler(QQuickView *view, ActionHandler* handler);
+    bool connectMessageHandler(QQuickView *view,  ActionHandler* handler);
+    bool connectLoginHandler(QQuickView *view,  ActionHandler* handler);
+
+    void connectActionButtons(QObject *root, UiEventProcessor *uiProcessor);
+    void connectConnctionTypeButtons(QObject *root, UiEventProcessor *uiProcessor);
+
 
 };
 

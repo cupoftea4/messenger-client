@@ -11,7 +11,7 @@ class LoginActionHandler : public ActionHandler
     Q_OBJECT
 public:
     LoginActionHandler();
-    bool handler(QJsonObject json) override;
+    bool handle(QJsonObject json) override;
 signals:
     void failedLogin();
     void successfulLogin(QString username);

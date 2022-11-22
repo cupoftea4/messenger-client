@@ -1,7 +1,7 @@
-#ifndef MAILSLOTCLIENT_H
-#define MAILSLOTCLIENT_H
+#ifndef MAILSLOTCONNECTION_H
+#define MAILSLOTCONNECTION_H
 
-#include "communication.h"
+#include "connection.h"
 
 #include <string>
 #include <vector>
@@ -9,15 +9,17 @@
 #include <thread>
 #include <chrono>
 #include <windows.h>
+#include <QJsonDocument>
+#include "servereventservice.h"
 
 using namespace std::chrono_literals;
 
-class MailslotClient : public Communication
+class MailslotConnection : public Connection
 {
 public:
     constexpr static LPCWSTR SERVER_NAME = TEXT("\\\\.\\mailslot\\messenger_server");
 
-    MailslotClient();
+    MailslotConnection(ServerEventService *serverEventService);
     bool init() override;
     bool isInited() override;
     bool isServer() override;
@@ -35,4 +37,4 @@ private:
     std::function<void(std::wstring)> messageHandler;
 };
 
-#endif // MAILSLOTCLIENT_H
+#endif // MAILSLOTCONNECTION_H

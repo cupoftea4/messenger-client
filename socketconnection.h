@@ -10,16 +10,16 @@
 #include <QDebug>
 #include <vector>
 #include <iostream>
-#include "communication.h"
+#include "connection.h"
 #include "jsonfactory.h"
-#include "registeractionhandler.h"
 
 using namespace std::chrono_literals;
+const char* const DEFAULT_PORT = "12321";
 
-class SocketConnection : public Communication
+class SocketConnection : public Connection
 {
 public:
-    SocketConnection(std::string ip, std::map<QString, ActionHandler*> &handles);
+    SocketConnection(ServerEventService *serverEventService);
     bool init() override;
     bool isInited() override;
     bool isServer() override;
@@ -27,7 +27,6 @@ public:
     void disconnect() override;
 
     void sendRawMessage(const char*) override;
-    const char* DEFAULT_PORT = "12321";
 
 private:
     void startCheckingMessages();
@@ -37,7 +36,7 @@ private:
     std::function<void(std::wstring)> renderMessage;
     std::string ip = "localhost";
     std::string port = DEFAULT_PORT;
-    std::map<QString, ActionHandler*> actionHandles;
+
 };
 
 

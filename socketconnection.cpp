@@ -28,11 +28,8 @@ std::vector<std::string> split(const std::string& str, const std::string& delim)
     return tokens;
 }
 
-SocketConnection::SocketConnection(std::string ip, std::map<QString, ActionHandler*> &handles) {
-    std::vector<std::string> splitted = split(ip, ":");
-    this->ip = splitted[0];
-    this->port = splitted.size() > 1 ? splitted[1] : DEFAULT_PORT;
-    this->actionHandles = handles;
+SocketConnection::SocketConnection(ServerEventService *serverEventService) {
+    this->serverEventService = serverEventService;
 }
 
 bool SocketConnection::init() {
@@ -132,19 +129,17 @@ void SocketConnection::startCheckingMessages() {
                     qDebug() << "Error json upload";
                     continue;
                 }
-                std::string type;
                 if(!document.isObject())
                 {
                     continue;
                 }
                 QJsonObject obj(document.object());
-                QString action = obj.take(FIELD_ACTION).toString();
-                if (actionHandles.find(action) != actionHandles.end()) {
-                    actionHandles[action]->handler(obj);
-                }
+                serverEventService->handleEvent(obj);
 
             } else if (iResult == 0) {
                 qDebug() << "Something went wrong. Connection lost";
+                serverEventService->handleDisconnect();
+                disconnect();
             }
             std::this_thread::sleep_for(50ms);
             delete[] chBuf;

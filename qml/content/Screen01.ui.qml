@@ -26,12 +26,16 @@ Rectangle {
     }
 
     Connections {
+        target: ServerEventService
+        function onShowServerDisconnected() {
+            console.log("Lost connection with server")
+            rectangle.state = "base"
+        }
+    }
+
+    Connections {
         target: MessageHandler
         function onMessageReceived(sender, msg) {
-            const jsObj = {
-                smth: "asj"
-            }
-
             console.log("Appending message from client: ", sender, ": ", msg)
             const isMy = (name.text === sender)
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
@@ -289,13 +293,13 @@ Rectangle {
 
                 function onClicked() {
                     if (username.length < 3 || !username.text.match(
-                                /^[0-9a-z_]+$/)) {
+                                /^[0-9A-Za-z_]+$/)) {
                         username_error.visible = true
                         username_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                         password_error.visible = false
                     } else if (password.length < 6 || !password.text.match(
-                                   /^[0-9a-z]+$/)) {
+                                   /^[0-9A-Za-z]+$/)) {
                         password_error.visible = true
                         password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"
@@ -734,6 +738,7 @@ and contain only latin letters or digits"
             Connections {
                 function onClicked() {
                     send_btn.sendMessage(message.text)
+                    message.text = ""
                 }
             }
         }

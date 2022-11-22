@@ -9,7 +9,7 @@ bool QuickViewWrapper::event(QEvent *event)
 {
     if (event->type() == QEvent::Close) {
         if (uiProcessor != nullptr) {
-            uiProcessor->disconnect();
+            delete uiProcessor;
         }
         qDebug() << "Closed the window";
     }

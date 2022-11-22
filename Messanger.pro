@@ -7,15 +7,17 @@ QT += quickcontrols2
 
 SOURCES += \
         actionhandler.cpp \
-        connectionservice.cpp \
+        connectionprovider.cpp \
         jsonfactory.cpp \
         loginactionhandler.cpp \
-        mailslotclient.cpp \
+        mailslotconnection.cpp \
         main.cpp \
         messageactionhandler.cpp \
-        pipeclient.cpp \
+        messengerconfiguration.cpp \
+        pipeconnection.cpp \
         quickviewwrapper.cpp \
         registeractionhandler.cpp \
+        servereventservice.cpp \
         signalsconnector.cpp \
         socketconnection.cpp \
         uieventprocessor.cpp
@@ -41,16 +43,18 @@ DISTFILES += \
 
 HEADERS += \
     actionhandler.h \
-    communication.h \
-    connectionservice.h \
+    connection.h \
+    connectionprovider.h \
     jsonconstants.h \
     jsonfactory.h \
     loginactionhandler.h \
-    mailslotclient.h \
+    mailslotconnection.h \
     messageactionhandler.h \
-    pipeclient.h \
+    messengerconfiguration.h \
+    pipeconnection.h \
     quickviewwrapper.h \
     registeractionhandler.h \
+    servereventservice.h \
     signalsconnector.h \
     socketconnection.h \
     uieventprocessor.h
