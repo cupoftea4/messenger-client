@@ -16,6 +16,7 @@ public:
     bool connect(QQuickView *view, ServerEventService *eventService, UiEventProcessor *uiProcessor);
 
 private:
+    // TODO: refactor return types
     void connectHandlers(QQuickView *view, ServerEventService *eventService);
     void connectUiProcessor(QQuickView *view, UiEventProcessor *uiProcessor);
     void connectServerEventService(QQuickView *view, ServerEventService *eventService);

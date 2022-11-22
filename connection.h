@@ -12,6 +12,7 @@ class Connection {
 
 public:
     virtual ~Connection() {
+        // TODO: ...
         qDebug() << "Connection destructor called";
         if (serverEventService != nullptr)
             delete serverEventService;

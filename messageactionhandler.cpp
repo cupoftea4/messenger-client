@@ -5,7 +5,7 @@ MessageActionHandler::MessageActionHandler()
 
 }
 
-bool MessageActionHandler::handler(QJsonObject json)
+bool MessageActionHandler::handle(QJsonObject json)
 {
     qDebug() << "I'm in handler";
     auto sender = json.take(FIELD_USERNAME).toString();

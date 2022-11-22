@@ -7,7 +7,7 @@ class ActionHandler : public QObject
 {
 public:
     ActionHandler();
-    virtual bool handler(QJsonObject json) = 0;
+    virtual bool handle(QJsonObject json) = 0;
 };
 
 #endif // ACTIONHANDLER_H

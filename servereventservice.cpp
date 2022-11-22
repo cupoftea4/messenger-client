@@ -11,7 +11,7 @@ void ServerEventService::handleEvent(QJsonObject json)
     QString action = json.take(FIELD_ACTION).toString();
 
     if (actionHandles.find(action) != actionHandles.end()) {
-        actionHandles[action]->handler(json);
+        actionHandles[action]->handle(json);
     }
 }
 

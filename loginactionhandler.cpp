@@ -5,7 +5,7 @@ LoginActionHandler::LoginActionHandler()
 
 }
 
-bool LoginActionHandler::handler(QJsonObject json)
+bool LoginActionHandler::handle(QJsonObject json)
 {
     auto status = json.take(FIELD_STATUS).toString();
 

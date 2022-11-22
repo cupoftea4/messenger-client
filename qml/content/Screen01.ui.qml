@@ -293,13 +293,13 @@ Rectangle {
 
                 function onClicked() {
                     if (username.length < 3 || !username.text.match(
-                                /^[0-9a-z_]+$/)) {
+                                /^[0-9A-Za-z_]+$/)) {
                         username_error.visible = true
                         username_error.text = "Name should be at least 3 character long \
 and contain only latin letters or digits"
                         password_error.visible = false
                     } else if (password.length < 6 || !password.text.match(
-                                   /^[0-9a-z]+$/)) {
+                                   /^[0-9A-Za-z]+$/)) {
                         password_error.visible = true
                         password_error.text = "Password should be at least 6 character long \
 and contain only latin letters or digits"

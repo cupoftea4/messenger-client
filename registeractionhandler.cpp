@@ -1,7 +1,7 @@
 #include "registeractionhandler.h"
 
 
-bool RegisterActionHandler::handler(QJsonObject json)
+bool RegisterActionHandler::handle(QJsonObject json)
 {
     auto status = json.take(FIELD_STATUS);
     if (status == STATUS_SUCCESS) {

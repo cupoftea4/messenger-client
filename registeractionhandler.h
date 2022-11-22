@@ -10,7 +10,7 @@ class RegisterActionHandler : public ActionHandler
 {
     Q_OBJECT
 public:
-    bool handler(QJsonObject json) override;
+    bool handle(QJsonObject json) override;
 signals:
     void failedRegistration();
     void successfulRegistration(QString username);
