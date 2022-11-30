@@ -1,4 +1,5 @@
 #include "jsonfactory.h"
+#include <windows.h>
 
 JsonObjectWrapper JsonFactory::pingJson()
 {
@@ -31,5 +32,16 @@ JsonObjectWrapper JsonFactory::sendMsgJson(QString message)
     JsonObjectWrapper content;
     content.insert(FIELD_ACTION, ACTION_MESSAGE);
     content.insert(FIELD_PAYLOAD, message);
+    // for pipes and mailslots
+    content.insert("PID", QString::number(GetCurrentProcessId()));
+    return content;
+}
+
+JsonObjectWrapper JsonFactory::sendJoinJson()
+{
+    JsonObjectWrapper content;
+    content.insert(FIELD_ACTION, "JOIN");
+    // for pipes and mailslots
+    content.insert("PID", QString::number(GetCurrentProcessId()));
     return content;
 }

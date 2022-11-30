@@ -110,8 +110,9 @@ void PipeConnection::startCheckingMessages() {
                  NULL);
 
             if (success) {
-                char *str;
-                wcstombs(str, chBuf, wcslen(chBuf) + 1);
+                std::wstring test(chBuf);
+                std::string test2(test.begin(), test.end());
+                QByteArray str(test2.c_str(), test2.length());
                 qDebug() << "Received information: " << str;
                 QJsonParseError jsonError;
                 QJsonDocument document = QJsonDocument::fromJson(str, &jsonError);

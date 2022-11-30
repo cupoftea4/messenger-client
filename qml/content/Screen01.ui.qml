@@ -15,12 +15,14 @@ Rectangle {
             rectangle.state = "login";
             console.log("Sockets connected");
         }
-        function onPipesConnected() {
+        function onPipesConnected(receivedName) {
             rectangle.state = "chat";
+            name.text = receivedName
             console.log("Pipes connected");
         }
-        function onMailslotsConnected() {
+        function onMailslotsConnected(receivedName) {
             rectangle.state = "chat";
+            name.text = receivedName
             console.log("Mailslots connected");
         }
     }

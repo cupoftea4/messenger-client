@@ -26,6 +26,7 @@ public:
     static JsonObjectWrapper loginJson(QString username, QString password);
     static JsonObjectWrapper registerJson(QString username, QString password);
     static JsonObjectWrapper sendMsgJson(QString message);
+    static JsonObjectWrapper sendJoinJson();
 };
 
 #endif // JSONFACTORY_H

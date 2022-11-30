@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "connectionprovider.h"
+#include <windows.h>
 
 class UiEventProcessor : public QObject
 {
@@ -13,8 +14,8 @@ public:
 
 signals:
     void socketsConnected();
-    void pipesConnected();
-    void mailslotsConnected();
+    void pipesConnected(QString);
+    void mailslotsConnected(QString);
 
     void connectionFailed();
 

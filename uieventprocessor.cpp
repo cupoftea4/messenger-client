@@ -26,7 +26,7 @@ void UiEventProcessor::onPipesConnectionClicked()
 {
     qDebug() << "Pipes button clicked";
     if (connectionProvider->setActiveConnection(PIPES)) {
-        emit pipesConnected();
+        emit pipesConnected(QString::number(GetCurrentProcessId()));
     } else {
         emit connectionFailed();
     }
@@ -36,7 +36,7 @@ void UiEventProcessor::onMailslotsConnectionClicked()
 {
     qDebug() << "Mailslots button clicked";
     if (connectionProvider->setActiveConnection(MAILSLOTS)) {
-        emit mailslotsConnected();
+        emit mailslotsConnected(QString::number(GetCurrentProcessId()));
     } else {
         emit connectionFailed();
     }
