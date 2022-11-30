@@ -15,11 +15,11 @@ Rectangle {
             rectangle.state = "login";
             console.log("Sockets connected");
         }
-        function onPipesConnected(receivedName) {
-            rectangle.state = "chat";
-            name.text = receivedName
-            console.log("Pipes connected");
-        }
+//        function onPipesConnected(receivedName) {
+//            rectangle.state = "chat";
+//            name.text = receivedName
+//            console.log("Pipes connected");
+//        }
         function onMailslotsConnected(receivedName) {
             rectangle.state = "chat";
             name.text = receivedName
@@ -171,27 +171,27 @@ Rectangle {
             }
         }
 
-        Button {
-            id: pipes_btn
-            objectName: "pipes_btn"
-            height: 48
-            text: qsTr("PIPES")
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-            flat: true
-            highlighted: true
+//        Button {
+//            id: pipes_btn
+//            objectName: "pipes_btn"
+//            height: 48
+//            text: qsTr("PIPES")
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+//            anchors.leftMargin: 0
+//            anchors.rightMargin: 0
+//            flat: true
+//            highlighted: true
 
-            signal pipesClicked()
+//            signal pipesClicked()
 
-            Connections {
-                target: pipes_btn
-                function onClicked() {
-                    pipes_btn.pipesClicked();
-                }
-            }
-        }
+//            Connections {
+//                target: pipes_btn
+//                function onClicked() {
+//                    pipes_btn.pipesClicked();
+//                }
+//            }
+//        }
 
         Button {
             id: mailslots_btn

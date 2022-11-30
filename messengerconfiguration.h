@@ -2,12 +2,12 @@
 #define MESSENGERCONFIGURATION_H
 
 #include "signalsconnector.h"
-#include "messageactionhandler.h"
-#include "loginactionhandler.h"
-#include "registeractionhandler.h"
-#include "socketconnection.h"
-#include "mailslotconnection.h"
-#include "pipeconnection.h"
+#include "action_handles/messageactionhandler.h"
+#include "action_handles/loginactionhandler.h"
+#include "action_handles/registeractionhandler.h"
+#include "connectins/socketconnection.h"
+#include "connectins/mailslotconnection.h"
+#include "connectins/pipeconnection.h"
 #include "quickviewwrapper.h"
 
 #include <QQmlApplicationEngine>

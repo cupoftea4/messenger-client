@@ -4,6 +4,7 @@
 #include <QObject>
 #include "connectionprovider.h"
 #include <windows.h>
+#include "connectins/connection.h"
 
 class UiEventProcessor : public QObject
 {
@@ -14,7 +15,6 @@ public:
 
 signals:
     void socketsConnected();
-    void pipesConnected(QString);
     void mailslotsConnected(QString);
 
     void connectionFailed();
@@ -25,7 +25,6 @@ public slots:
     void onMessageSend(QString message);
 
     void onSocketsConnectionClicked();
-    void onPipesConnectionClicked();
     void onMailslotsConnectionClicked();
 
 private:

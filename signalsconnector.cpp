@@ -33,8 +33,8 @@ void SignalsConnector::connectUiProcessor(QQuickView *view, UiEventProcessor *ui
     view->engine()->rootContext()->setContextProperty("UiProcessor", uiProcessor);
     QObject::connect(uiProcessor, SIGNAL(socketsConnected()),
                         root, SLOT(onSocketsConnected()), Qt::QueuedConnection);
-    QObject::connect(uiProcessor, SIGNAL(pipesConnected()),
-                        root, SLOT(onPipesConnected()), Qt::QueuedConnection);
+//    QObject::connect(uiProcessor, SIGNAL(pipesConnected()),
+//                        root, SLOT(onPipesConnected()), Qt::QueuedConnection);
     QObject::connect(uiProcessor, SIGNAL(mailslotsConnected()),
                         root, SLOT(onMailslotsConnected()), Qt::QueuedConnection);
 
@@ -120,16 +120,16 @@ void SignalsConnector::connectActionButtons(QObject *root, UiEventProcessor *uiP
 void SignalsConnector::connectConnctionTypeButtons(QObject *root, UiEventProcessor *uiProcessor)
 {
     QObject *socketsButton = root->findChild<QObject*>("sockets_btn");
-    QObject *pipesButton = root->findChild<QObject*>("pipes_btn");
+//    QObject *pipesButton = root->findChild<QObject*>("pipes_btn");
     QObject *mailslotsButton = root->findChild<QObject*>("mailslots_btn");
 
-    if (socketsButton == nullptr || pipesButton == nullptr || mailslotsButton == nullptr)
+    if (socketsButton == nullptr || /*pipesButton == nullptr ||*/ mailslotsButton == nullptr)
         return;
 
     QObject::connect(socketsButton, SIGNAL(socketsClicked()),
                         uiProcessor, SLOT(onSocketsConnectionClicked()));
-    QObject::connect(pipesButton, SIGNAL(pipesClicked()),
-                        uiProcessor, SLOT(onPipesConnectionClicked()));
+//    QObject::connect(pipesButton, SIGNAL(pipesClicked()),
+//                        uiProcessor, SLOT(onPipesConnectionClicked()));
     QObject::connect(mailslotsButton, SIGNAL(mailslotsClicked()),
                         uiProcessor, SLOT(onMailslotsConnectionClicked()));
 }

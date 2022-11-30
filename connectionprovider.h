@@ -1,7 +1,7 @@
 #ifndef CONNECTIONPROVIDER_H
 #define CONNECTIONPROVIDER_H
 
-#include "connection.h"
+#include "connectins/connection.h"
 #include <QDebug>
 #include "jsonfactory.h"
 

@@ -54,15 +54,7 @@ bool PipeConnection::isServer() {
 }
 
 void PipeConnection::notifyServerJoin() {
-    int pid = GetCurrentProcessId();
-    DWORD bytesWritten = 0;
-    std::wstring message = L"J:"+std::to_wstring(pid);
-    LPCVOID msg = message.c_str();
-    WriteFile(serverSlot,
-         msg,
-         message.size()*sizeof(wchar_t),
-         &bytesWritten,
-         (LPOVERLAPPED) NULL);
+    sendRawMessage(JsonFactory::sendJoinJson().c_str());
 }
 
 void PipeConnection::disconnect() {
@@ -86,7 +78,7 @@ void PipeConnection::disconnect() {
 
 void PipeConnection::sendRawMessage(const char *message) {
     DWORD bytesWritten = 0;
-    std::wstring prefixed = L"M:" + QString(message).toStdWString();
+    std::wstring prefixed = QString(message).toStdWString();
     LPCVOID msg = prefixed.c_str();
     WriteFile(serverPipe,
          msg,
@@ -120,6 +112,7 @@ void PipeConnection::startCheckingMessages() {
                     qDebug() << "Error json upload";
                     continue;
                 }
+                if(!document.isObject()) continue;
                 QJsonObject obj(document.object());
                 serverEventService->handleEvent(obj);
 
@@ -144,8 +137,4 @@ void PipeConnection::addServerPipe() {
     if(hServer != INVALID_HANDLE_VALUE) {
         serverPipe = hServer;
     }
-}
-
-void PipeConnection::setMessageReceiver(std::function<void(std::wstring)> lambda) {
-    messageHandler = lambda;
 }

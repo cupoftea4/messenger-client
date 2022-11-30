@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include "actionhandler.h"
+#include "action_handles/actionhandler.h"
 #include "jsonconstants.h"
 
 class MessageActionHandler : public ActionHandler

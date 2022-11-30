@@ -49,14 +49,7 @@ bool MailslotConnection::isServer() {
 
 void MailslotConnection::notifyServerJoin() {
     sendRawMessage(JsonFactory::sendJoinJson().c_str());
-//    DWORD bytesWritten = 0;
-//    std::wstring message = JsonFactory::sendJoinJson().c_str();
-//    LPCVOID msg = JsonFactory::sendJoinJson().c_str();
-//    WriteFile(serverSlot,
-//         msg,
-//         message.size()*sizeof(wchar_t),
-//         &bytesWritten,
-//         (LPOVERLAPPED) NULL);
+
 }
 
 void MailslotConnection::disconnect() {
@@ -119,11 +112,8 @@ void MailslotConnection::startCheckingMessages() {
                         qDebug() << "Error json upload";
                         continue;
                     }
-                    std::string type;
-                    if(!document.isObject())
-                    {
-                        continue;
-                    }
+                    if(!document.isObject()) continue;
+
                     QJsonObject obj(document.object());
                     serverEventService->handleEvent(obj);
                 }
