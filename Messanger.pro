@@ -1,6 +1,6 @@
-QT += quick
-QT += quickcontrols2
 
+QT += core gui quick quickcontrols2
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
@@ -38,6 +38,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    qml/content/icons/open.png \
+    qml/content/images/i1669877641.png \
     qtquickcontrols2.conf
 
 HEADERS += \

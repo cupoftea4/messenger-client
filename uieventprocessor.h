@@ -5,6 +5,8 @@
 #include "connectionprovider.h"
 #include <windows.h>
 #include "connectins/connection.h"
+#include <QFile>
+#include <QFileDialog>
 
 class UiEventProcessor : public QObject
 {
@@ -23,6 +25,8 @@ public slots:
     void onRegisterClicked(const QString &name, const QString &password);
     void onLoginClicked(const QString &name, const QString &password);
     void onMessageSend(QString message);
+
+    void onOpenImageClicked(QString path);
 
     void onSocketsConnectionClicked();
     void onMailslotsConnectionClicked();

@@ -13,7 +13,7 @@ public:
     MessageActionHandler();
     bool handle(QJsonObject json) override;
 signals:
-    void messageReceived(QString sender, QString msg);
+    void messageReceived(QString sender, QString msg, QString type);
 };
 
 #endif // MESSAGEACTIONHANDLER_H

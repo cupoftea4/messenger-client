@@ -4,9 +4,11 @@
 // json fields
 const char *const FIELD_ACTION = "action";
 const char *const FIELD_PAYLOAD = "payload";
+const char *const FIELD_TYPE = "type";
 const char *const FIELD_USERNAME = "username";
 const char *const FIELD_PASSWORD = "password";
 const char *const FIELD_STATUS = "status";
+const char *const FIELD_PID = "PID";
 
 // json actions
 const char *const ACTION_PING = "PING";

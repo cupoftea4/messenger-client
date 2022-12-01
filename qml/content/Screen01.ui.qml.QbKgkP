@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Controls
-import QtQuick.Dialogs
 import Messanger
 import QtQuick.Timeline 1.0
 
@@ -38,9 +37,8 @@ Rectangle {
 
     Connections {
         target: MessageHandler
-        function onMessageReceived(sender, msg, type) {
+        function onMessageReceived(sender, msg) {
             console.log("Appending message from client: ", sender, ": ", msg)
-
             const isMy = (name.text === sender)
             const msgAnchors = (isMy) ? "anchors.right: parent.right\n anchors.rightMargin: 0" : "anchors.left: parent.left\nanchors.leftMargin: 0"
             const msgBackgroundColor = (isMy) ? "white" : "#a61547"
@@ -50,96 +48,54 @@ Rectangle {
             msgWidth = Math.min(msgWidth, 350)
             const msgSender = sender
 
-            if (type === "TEXT") {
-                const newObj = Qt.createQmlObject(`
-                                                  import QtQuick 2.0
-                                                  Item {
-                                                  width: 400
-                                                  height: ${msgHeight}
+            const newObj = Qt.createQmlObject(`
+                                              import QtQuick 2.0
+                                              Item {
+                                              width: 400
+                                              height: ${msgHeight}
 
-                                                  Rectangle {
-                                                  id: message_sample
-                                                  width: ${msgWidth}
-                                                  height: ${msgHeight}
-                                                  radius: 15
-                                                  color: "${msgBackgroundColor}"
-                                                  ${msgAnchors}
+                                              Rectangle {
+                                              id: message_sample
+                                              width: ${msgWidth}
+                                              height: ${msgHeight}
+                                              radius: 15
+                                              color: "${msgBackgroundColor}"
+                                              ${msgAnchors}
 
-                                                  Text {
-                                                  id: sender
-                                                  visible: ${!isMy}
-                                                  font.bold: true
-                                                  color: "${msgColor}"
-                                                  text: "${msgSender}"
-                                                  anchors.left: parent.left
-                                                  anchors.top: parent.top
-                                                  anchors.leftMargin: 10
-                                                  anchors.topMargin: 5
+                                              Text {
+                                              id: sender
+                                              visible: ${!isMy}
+                                              font.bold: true
+                                              color: "${msgColor}"
+                                              text: "${msgSender}"
+                                              anchors.left: parent.left
+                                              anchors.top: parent.top
+                                              anchors.leftMargin: 10
+                                              anchors.topMargin: 5
 
-                                                  }
+                                              }
 
-                                                  Text {
-                                                  id: msg
-                                                  color: "${msgColor}"
-                                                  text: "${msg}"
-                                                  anchors.fill: parent
-                                                  font.pixelSize: 16
-                                                  wrapMode: Text.Wrap
-                                                  horizontalAlignment: Text.AlignHLeft
-                                                  verticalAlignment: Text.AlignVCenter
-                                                  anchors.rightMargin: 10
-                                                  anchors.leftMargin: 10
-                                                  anchors.bottomMargin: 10
-                                                  anchors.topMargin: ${isMy ? 10 : 20}
-                                                  }
-                                                  }
-                                                  }
+                                              Text {
+                                              id: msg
+                                              color: "${msgColor}"
+                                              text: "${msg}"
+                                              anchors.fill: parent
+                                              font.pixelSize: 16
+                                              wrapMode: Text.Wrap
+                                              horizontalAlignment: Text.AlignHLeft
+                                              verticalAlignment: Text.AlignVCenter
+                                              anchors.rightMargin: 10
+                                              anchors.leftMargin: 10
+                                              anchors.bottomMargin: 10
+                                              anchors.topMargin: ${isMy ? 10 : 20}
+                                              }
+                                              }
+                                              }
 
-                                                  `, messages, "myDynamicSnippet")
-            } else {
-                const newObj = Qt.createQmlObject(`
-                                                  import QtQuick 2.0
-                                                  Item {
-                                                  width: 400
-                                                  height: 200
-
-                                                  Rectangle {
-                                                  id: message_sample
-                                                  width: 200
-                                                  height: 200
-                                                  radius: 15
-                                                  color: "transparent"
-                                                  ${msgAnchors}
-
-                                                  Text {
-                                                  id: sender
-                                                  visible: ${!isMy}
-                                                  font.bold: true
-                                                  color: "${msgColor}"
-                                                  text: "${msgSender}"
-                                                  anchors.left: parent.left
-                                                  anchors.top: parent.top
-                                                  anchors.leftMargin: 10
-                                                  anchors.topMargin: 5
-
-                                                  }
-
-                                                  Image {
-                                                        width: 200; height: 200
-                                                      fillMode: Image.PreserveAspectFit
-                                                      source: "${"file:" + msg}"
-                                                  }
-                                                  }
-                                                  }
-
-                                                  `, messages, "myDynamicSnippet")
-            }
-
-
+                                              `, messages, "myDynamicSnippet")
             messages_scroll.ScrollBar.vertical.position = 1.0
         }
     }
-
 
     Connections {
         target: RegisterHandler
@@ -168,18 +124,6 @@ Rectangle {
             name.text = receivedName
         }
     }
-    FileDialog {
-           id: fileDialog
-           objectName: "img_dialog"
-           currentFolder: "./"
-           signal openImage(string selectedFile)
-           Connections {
-               function onAccepted() {
-                   fileDialog.openImage(fileDialog.selectedFile)
-               }
-           }
-    }
-
     Timeline {
         id: timeline
         animations: [
@@ -802,14 +746,12 @@ and contain only latin letters or digits"
         }
         RoundButton {
             id: images_btn
-            objectName: "images_btn"
             icon.source: "icons/open.png"
             icon.color: "white"
-
+            signal openImage()
             Connections {
                 function onClicked() {
-                    fileDialog.open()
-//                    images_btn.openImage();
+                    images_btn.openImage();
                 }
             }
         }

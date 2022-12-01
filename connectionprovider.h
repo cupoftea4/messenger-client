@@ -15,7 +15,7 @@ public:
 
     void sendRegisterMessage(const QString &name, const QString &password);
     void sendLoginMessage(const QString &name, const QString &password);
-    void sendChatMessage(const QString &message);
+    void sendChatMessage(const QString &message, const QString &type);
 
 private:
     bool init();

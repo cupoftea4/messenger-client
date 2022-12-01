@@ -79,8 +79,8 @@ bool SignalsConnector::connectMessageHandler(QQuickView *view, ActionHandler *ms
     view->engine()->rootContext()->setContextProperty("MessageHandler", msgHandler);
 
     // ui slots connects
-    QObject::connect(msgHandler, SIGNAL(messageReceived(QString,QString)),
-                        root, SLOT(onMessageReceived(QString,QString)), Qt::QueuedConnection);
+    QObject::connect(msgHandler, SIGNAL(messageReceived(QString,QString,QString)),
+                        root, SLOT(onMessageReceived(QString,QString,QString)), Qt::QueuedConnection);
     return true;
 }
 
@@ -105,7 +105,9 @@ void SignalsConnector::connectActionButtons(QObject *root, UiEventProcessor *uiP
     QObject *loginButton = root->findChild<QObject*>("login_btn");
     QObject *registerButton = root->findChild<QObject*>("register_btn");
 
-    if (sendButton == nullptr || loginButton == nullptr || registerButton == nullptr)
+    QObject *imageDialog = root->findChild<QObject*>("img_dialog");
+
+    if (sendButton == nullptr || loginButton == nullptr || registerButton == nullptr || imageDialog == nullptr)
         return;
 
     QObject::connect(sendButton, SIGNAL(sendMessage(QString)),
@@ -114,7 +116,8 @@ void SignalsConnector::connectActionButtons(QObject *root, UiEventProcessor *uiP
                         uiProcessor, SLOT(onLoginClicked(QString,QString)));
     QObject::connect(registerButton, SIGNAL(registerClicked(QString,QString)),
                         uiProcessor, SLOT(onRegisterClicked(QString,QString)));
-
+    QObject::connect(imageDialog, SIGNAL(openImage(QString)),
+                        uiProcessor, SLOT(onOpenImageClicked(QString)));
 }
 
 void SignalsConnector::connectConnctionTypeButtons(QObject *root, UiEventProcessor *uiProcessor)

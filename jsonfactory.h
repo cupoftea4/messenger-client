@@ -25,7 +25,7 @@ public:
     static JsonObjectWrapper pingJson();
     static JsonObjectWrapper loginJson(QString username, QString password);
     static JsonObjectWrapper registerJson(QString username, QString password);
-    static JsonObjectWrapper sendMsgJson(QString message);
+    static JsonObjectWrapper sendMsgJson(QString message, QString type);
     static JsonObjectWrapper sendJoinJson();
 };
 

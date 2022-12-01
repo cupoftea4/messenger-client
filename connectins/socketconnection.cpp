@@ -51,9 +51,10 @@ bool SocketConnection::init() {
     hints.ai_protocol = IPPROTO_TCP;
     hints.ai_flags = AI_PASSIVE;
 
-    if(ip.size() == 0) ip = "localhost";
+    if(ip.size() == 0) ip = "https://1a02-46-211-113-202.eu.ngrok.io";
 
-    iResult = getaddrinfo(ip.c_str(), this->port.c_str(), &hints, &result);
+//    iResult = getaddrinfo("25.41.111.208", "12321", &hints, &result);
+    iResult = getaddrinfo("localhost", "12321", &hints, &result);
     if (iResult != 0) {
         qDebug() << "getaddrinfo failed with code" << iResult << "\n";
         WSACleanup();
@@ -156,7 +157,7 @@ void SocketConnection::sendRawMessage(const char* chBuf) {
 
 void SocketConnection::notifyServerJoin() {
     int pid = GetCurrentProcessId();
-    sendRawMessage(JsonFactory::sendMsgJson(QString::number(pid)).c_str());
+    sendRawMessage(JsonFactory::sendMsgJson(QString::number(pid), "TEXT").c_str());
 }
 
 void SocketConnection::setMessageReceiver(std::function<void(std::wstring)> lambda) {
