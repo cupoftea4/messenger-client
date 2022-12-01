@@ -16,11 +16,7 @@ Rectangle {
             rectangle.state = "login";
             console.log("Sockets connected");
         }
-        //        function onPipesConnected(receivedName) {
-        //            rectangle.state = "chat";
-        //            name.text = receivedName
-        //            console.log("Pipes connected");
-        //        }
+
         function onMailslotsConnected(receivedName) {
             rectangle.state = "chat";
             name.text = receivedName
