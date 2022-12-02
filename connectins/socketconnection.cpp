@@ -53,8 +53,8 @@ bool SocketConnection::init() {
 
     if(ip.size() == 0) ip = "https://1a02-46-211-113-202.eu.ngrok.io";
 
-//    iResult = getaddrinfo("25.41.111.208", "12321", &hints, &result);
-    iResult = getaddrinfo("localhost", "12321", &hints, &result);
+    iResult = getaddrinfo("25.41.111.208", "12321", &hints, &result);
+//    iResult = getaddrinfo("localhost", "12321", &hints, &result);
     if (iResult != 0) {
         qDebug() << "getaddrinfo failed with code" << iResult << "\n";
         WSACleanup();

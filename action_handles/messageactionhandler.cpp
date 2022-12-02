@@ -1,6 +1,8 @@
 #include "messageactionhandler.h"
 #include <QResource>
 #include <QJsonArray>
+#include <QCoreApplication>
+#include <QSaveFile>
 
 MessageActionHandler::MessageActionHandler()
 {
@@ -29,5 +31,20 @@ void MessageActionHandler::showMessage(QJsonObject json)
     auto sender = json[FIELD_USERNAME].toString();
     auto message = json[FIELD_PAYLOAD].toString();
     auto type = json[FIELD_TYPE].toString();
-    emit messageReceived(sender, message, type);
+    if (type == TYPE_IMAGE) {
+        QByteArray ba = message.toLatin1();
+        ba = QByteArray::fromBase64Encoding(ba).decoded;
+
+        QString path = QCoreApplication::applicationDirPath();
+        QString fileName = "/i" + QString::number(std::time(0)) + ".png";
+        path.append(fileName);
+
+        QSaveFile file(path);
+        file.open(QIODevice::WriteOnly);
+        file.write(ba);
+        file.commit();
+        emit messageReceived(sender, path, type);
+    } else {
+        emit messageReceived(sender, message, type);
+    }
 }
