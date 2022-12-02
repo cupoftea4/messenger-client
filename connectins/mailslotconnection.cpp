@@ -48,22 +48,15 @@ bool MailslotConnection::isServer() {
 }
 
 void MailslotConnection::notifyServerJoin() {
-    int pid = GetCurrentProcessId();
-    DWORD bytesWritten = 0;
-    std::wstring message = L"J:"+std::to_wstring(pid);
-    LPCVOID msg = message.c_str();
-    WriteFile(serverSlot,
-         msg,
-         message.size()*sizeof(wchar_t),
-         &bytesWritten,
-         (LPOVERLAPPED) NULL);
+    sendRawMessage(JsonFactory::sendJoinJson().c_str());
+
 }
 
 void MailslotConnection::disconnect() {
     if(!isInited()) return;
     int pid = GetCurrentProcessId();
     DWORD bytesWritten = 0;
-    std::wstring message = L"L:"+std::to_wstring(pid);
+    std::wstring message = std::to_wstring(pid);
     LPCVOID msg = message.c_str();
     WriteFile(serverSlot,
          msg,
@@ -77,8 +70,9 @@ void MailslotConnection::disconnect() {
 }
 
 void MailslotConnection::sendRawMessage(const char * message) {
+    qDebug() << "Sending with mailslots: " << message;
     DWORD bytesWritten = 0;
-    std::wstring prefixed = L"M:" + QString(message).toStdWString();
+    std::wstring prefixed = QString(message).toStdWString();
     LPCVOID msg = prefixed.c_str();
     WriteFile(serverSlot,
          msg,
@@ -108,8 +102,9 @@ void MailslotConnection::startCheckingMessages() {
                      NULL);
 
                 if(success) {
-                    char *str = "";
-                    wcstombs(str, chBuf, wcslen(chBuf) + 1);
+                    std::wstring test(chBuf);
+                    string test2(test.begin(), test.end());
+                    QByteArray str(test2.c_str(), test2.length());
                     qDebug() << "Received information: " << str;
                     QJsonParseError jsonError;
                     QJsonDocument document = QJsonDocument::fromJson(str, &jsonError);
@@ -117,11 +112,8 @@ void MailslotConnection::startCheckingMessages() {
                         qDebug() << "Error json upload";
                         continue;
                     }
-                    std::string type;
-                    if(!document.isObject())
-                    {
-                        continue;
-                    }
+                    if(!document.isObject()) continue;
+
                     QJsonObject obj(document.object());
                     serverEventService->handleEvent(obj);
                 }

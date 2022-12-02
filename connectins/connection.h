@@ -6,7 +6,7 @@
 #include <QObject>
 #include "servereventservice.h"
 
-enum ConnectionType {NONE, SOCKETS, PIPES, MAILSLOTS};
+enum ConnectionType {NONE, SOCKETS, MAILSLOTS};
 
 class Connection {
 

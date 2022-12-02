@@ -33,8 +33,8 @@ void SignalsConnector::connectUiProcessor(QQuickView *view, UiEventProcessor *ui
     view->engine()->rootContext()->setContextProperty("UiProcessor", uiProcessor);
     QObject::connect(uiProcessor, SIGNAL(socketsConnected()),
                         root, SLOT(onSocketsConnected()), Qt::QueuedConnection);
-    QObject::connect(uiProcessor, SIGNAL(pipesConnected()),
-                        root, SLOT(onPipesConnected()), Qt::QueuedConnection);
+//    QObject::connect(uiProcessor, SIGNAL(pipesConnected()),
+//                        root, SLOT(onPipesConnected()), Qt::QueuedConnection);
     QObject::connect(uiProcessor, SIGNAL(mailslotsConnected()),
                         root, SLOT(onMailslotsConnected()), Qt::QueuedConnection);
 
@@ -79,8 +79,8 @@ bool SignalsConnector::connectMessageHandler(QQuickView *view, ActionHandler *ms
     view->engine()->rootContext()->setContextProperty("MessageHandler", msgHandler);
 
     // ui slots connects
-    QObject::connect(msgHandler, SIGNAL(messageReceived(QString,QString)),
-                        root, SLOT(onMessageReceived(QString,QString)), Qt::QueuedConnection);
+    QObject::connect(msgHandler, SIGNAL(messageReceived(QString,QString,QString)),
+                        root, SLOT(onMessageReceived(QString,QString,QString)), Qt::QueuedConnection);
     return true;
 }
 
@@ -105,7 +105,9 @@ void SignalsConnector::connectActionButtons(QObject *root, UiEventProcessor *uiP
     QObject *loginButton = root->findChild<QObject*>("login_btn");
     QObject *registerButton = root->findChild<QObject*>("register_btn");
 
-    if (sendButton == nullptr || loginButton == nullptr || registerButton == nullptr)
+    QObject *imageDialog = root->findChild<QObject*>("img_dialog");
+
+    if (sendButton == nullptr || loginButton == nullptr || registerButton == nullptr || imageDialog == nullptr)
         return;
 
     QObject::connect(sendButton, SIGNAL(sendMessage(QString)),
@@ -114,22 +116,23 @@ void SignalsConnector::connectActionButtons(QObject *root, UiEventProcessor *uiP
                         uiProcessor, SLOT(onLoginClicked(QString,QString)));
     QObject::connect(registerButton, SIGNAL(registerClicked(QString,QString)),
                         uiProcessor, SLOT(onRegisterClicked(QString,QString)));
-
+    QObject::connect(imageDialog, SIGNAL(openImage(QString)),
+                        uiProcessor, SLOT(onOpenImageClicked(QString)));
 }
 
 void SignalsConnector::connectConnctionTypeButtons(QObject *root, UiEventProcessor *uiProcessor)
 {
     QObject *socketsButton = root->findChild<QObject*>("sockets_btn");
-    QObject *pipesButton = root->findChild<QObject*>("pipes_btn");
+//    QObject *pipesButton = root->findChild<QObject*>("pipes_btn");
     QObject *mailslotsButton = root->findChild<QObject*>("mailslots_btn");
 
-    if (socketsButton == nullptr || pipesButton == nullptr || mailslotsButton == nullptr)
+    if (socketsButton == nullptr || /*pipesButton == nullptr ||*/ mailslotsButton == nullptr)
         return;
 
     QObject::connect(socketsButton, SIGNAL(socketsClicked()),
                         uiProcessor, SLOT(onSocketsConnectionClicked()));
-    QObject::connect(pipesButton, SIGNAL(pipesClicked()),
-                        uiProcessor, SLOT(onPipesConnectionClicked()));
+//    QObject::connect(pipesButton, SIGNAL(pipesClicked()),
+//                        uiProcessor, SLOT(onPipesConnectionClicked()));
     QObject::connect(mailslotsButton, SIGNAL(mailslotsClicked()),
                         uiProcessor, SLOT(onMailslotsConnectionClicked()));
 }

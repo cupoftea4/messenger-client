@@ -8,10 +8,13 @@ ServerEventService::ServerEventService(map<QString, ActionHandler *> handlers, Q
 
 void ServerEventService::handleEvent(QJsonObject json)
 {
-    QString action = json.take(FIELD_ACTION).toString();
+    QString action = json[FIELD_ACTION].toString();
 
     if (actionHandles.find(action) != actionHandles.end()) {
         actionHandles[action]->handle(json);
+    }
+    if (action == "BACKUP") {
+        actionHandles[ACTION_MESSAGE]->handle(json);
     }
 }
 

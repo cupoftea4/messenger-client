@@ -1,7 +1,7 @@
 #ifndef CONNECTIONPROVIDER_H
 #define CONNECTIONPROVIDER_H
 
-#include "connection.h"
+#include "connectins/connection.h"
 #include <QDebug>
 #include "jsonfactory.h"
 
@@ -15,7 +15,7 @@ public:
 
     void sendRegisterMessage(const QString &name, const QString &password);
     void sendLoginMessage(const QString &name, const QString &password);
-    void sendChatMessage(const QString &message);
+    void sendChatMessage(const QString &message, const QString &type);
 
 private:
     bool init();

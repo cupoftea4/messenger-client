@@ -28,12 +28,13 @@ void ConnectionProvider::sendLoginMessage(const QString &name, const QString &pa
     handleRawMessage(JsonFactory::loginJson(name, password).c_str());
 }
 
-void ConnectionProvider::sendChatMessage(const QString &message)
+void ConnectionProvider::sendChatMessage(const QString &message, const QString &type)
 {
     if (activeConnection == NONE)
         return;
     qDebug() << "Trying to send message:" << message;
-    handleRawMessage(JsonFactory::sendMsgJson(message).c_str());
+    handleRawMessage(JsonFactory::sendMsgJson(message, type).c_str());
+
 }
 
 void ConnectionProvider::handleRawMessage(const char *message)

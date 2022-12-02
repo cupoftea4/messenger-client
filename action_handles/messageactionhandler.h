@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include "actionhandler.h"
+#include "action_handles/actionhandler.h"
 #include "jsonconstants.h"
 
 class MessageActionHandler : public ActionHandler
@@ -12,8 +12,10 @@ class MessageActionHandler : public ActionHandler
 public:
     MessageActionHandler();
     bool handle(QJsonObject json) override;
+private:
+    void showMessage(QJsonObject json);
 signals:
-    void messageReceived(QString sender, QString msg);
+    void messageReceived(QString sender, QString msg, QString type);
 };
 
 #endif // MESSAGEACTIONHANDLER_H

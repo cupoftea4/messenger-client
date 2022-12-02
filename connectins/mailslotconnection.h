@@ -11,6 +11,7 @@
 #include <windows.h>
 #include <QJsonDocument>
 #include "servereventservice.h"
+#include "jsonfactory.h"
 
 using namespace std::chrono_literals;
 

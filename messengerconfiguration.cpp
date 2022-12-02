@@ -12,9 +12,9 @@ map<QString, ActionHandler *> MessengerConfiguration::getHandlers()
     if (!handlers.empty()) {
         return handlers;
     }
-    ActionHandler *msgHandler = new MessageActionHandler;
-    ActionHandler *loginHandler = new LoginActionHandler;
-    ActionHandler *registerHandler = new RegisterActionHandler;
+    ActionHandler *msgHandler = new MessageActionHandler();
+    ActionHandler *loginHandler = new LoginActionHandler();
+    ActionHandler *registerHandler = new RegisterActionHandler();
 
     handlers[ACTION_MESSAGE] = msgHandler;
     handlers[ACTION_LOGIN] = loginHandler;
@@ -37,11 +37,9 @@ map<ConnectionType, Connection *> MessengerConfiguration::getConnections()
         return connections;
 
     Connection *socketConnection = new SocketConnection(getServerEventService());
-    Connection *pipeConnection = new PipeConnection(getServerEventService());
     Connection *mailslotConnection = new MailslotConnection(getServerEventService());
 
     connections[SOCKETS] = socketConnection;
-    connections[PIPES] = pipeConnection;
     connections[MAILSLOTS] = mailslotConnection;
 
     return connections;
