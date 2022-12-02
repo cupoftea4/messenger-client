@@ -46,7 +46,44 @@ Rectangle {
             msgWidth = Math.min(msgWidth, 350)
             const msgSender = sender
 
-            if (type === "TEXT") {
+            if (type === "IMAGE") {
+                const newObj = Qt.createQmlObject(`
+                                                  import QtQuick 2.0
+                                                  Item {
+                                                  width: 400
+                                                  height: 200
+
+                                                  Rectangle {
+                                                  id: message_sample
+                                                  width: 200
+                                                  height: 200
+                                                  radius: 15
+                                                  color: "transparent"
+                                                  ${msgAnchors}
+
+                                                  Text {
+                                                  id: sender
+                                                  visible: ${!isMy}
+                                                  font.bold: true
+                                                  color: "${msgColor}"
+                                                  text: "${msgSender}"
+                                                  anchors.left: parent.left
+                                                  anchors.top: parent.top
+                                                  anchors.leftMargin: 10
+                                                  anchors.topMargin: 5
+
+                                                  }
+
+                                                  Image {
+                                                        width: 200; height: 200
+                                                      fillMode: Image.PreserveAspectFit
+                                                      source: "${"file:" + msg}"
+                                                  }
+                                                  }
+                                                  }
+
+                                                  `, messages, "myDynamicSnippet")
+            } else {
                 const newObj = Qt.createQmlObject(`
                                                   import QtQuick 2.0
                                                   Item {
@@ -92,43 +129,7 @@ Rectangle {
                                                   }
 
                                                   `, messages, "myDynamicSnippet")
-            } else {
-                const newObj = Qt.createQmlObject(`
-                                                  import QtQuick 2.0
-                                                  Item {
-                                                  width: 400
-                                                  height: 200
 
-                                                  Rectangle {
-                                                  id: message_sample
-                                                  width: 200
-                                                  height: 200
-                                                  radius: 15
-                                                  color: "transparent"
-                                                  ${msgAnchors}
-
-                                                  Text {
-                                                  id: sender
-                                                  visible: ${!isMy}
-                                                  font.bold: true
-                                                  color: "${msgColor}"
-                                                  text: "${msgSender}"
-                                                  anchors.left: parent.left
-                                                  anchors.top: parent.top
-                                                  anchors.leftMargin: 10
-                                                  anchors.topMargin: 5
-
-                                                  }
-
-                                                  Image {
-                                                        width: 200; height: 200
-                                                      fillMode: Image.PreserveAspectFit
-                                                      source: "${"file:" + msg}"
-                                                  }
-                                                  }
-                                                  }
-
-                                                  `, messages, "myDynamicSnippet")
             }
 
 

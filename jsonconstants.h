@@ -15,9 +15,13 @@ const char *const ACTION_PING = "PING";
 const char *const ACTION_LOGIN = "LOGIN";
 const char *const ACTION_REGISTER = "REGISTER";
 const char *const ACTION_MESSAGE = "MESSAGE";
+const char *const ACTION_CHAT_HISTORY = "BACKUP";
 
 // json status
 const char *const STATUS_SUCCESS = "SUCCESS";
 const char *const STATUS_FAIL = "FAIL";
+
+const char *const TYPE_TEXT = "TEXT";
+const char *const TYPE_IMAGE = "IMAGE";
 
 #endif // JSONCONSTANTS_H

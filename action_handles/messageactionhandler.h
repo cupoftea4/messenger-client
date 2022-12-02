@@ -12,6 +12,8 @@ class MessageActionHandler : public ActionHandler
 public:
     MessageActionHandler();
     bool handle(QJsonObject json) override;
+private:
+    void showMessage(QJsonObject json);
 signals:
     void messageReceived(QString sender, QString msg, QString type);
 };

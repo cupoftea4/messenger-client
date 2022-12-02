@@ -61,16 +61,6 @@ void UiEventProcessor::onOpenImageClicked(QString path)
    image.save(&buffer, "JPG"); // Save the QImage data into the QBuffer
 
    connectionProvider->sendChatMessage(QString::fromLatin1(ba.toBase64()), "IMAGE");
-//   qjo.insert("request_type", PHOTO_REQUEST);
-//   qjo.insert("photo", QString::fromLatin1(ba.toBase64()));
-
-//   qDebug() << "Size of QString::fromLatin1(ba.toBase64())): " << QString::fromLatin1(ba.toBase64()).size();	// 470184
-
-//   QJsonDocument doc(qjo);
-//   QString strJson(doc.toJson(QJsonDocument::Compact));
-//   info.append(strJson);
-//   ds << info;
-
 }
 
 void UiEventProcessor::onLoginClicked(const QString &name, const QString &password)
